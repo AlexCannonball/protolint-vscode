@@ -1,0 +1,141 @@
+{
+  "name": "protolint-vscode",
+  "version": "1.0.0",
+  "publisher": "astryna-tools",
+  "engines": {
+    "node": ">=22.17.0",
+    "vscode": "^1.103.0"
+  },
+  "license": "SEE LICENSE IN LICENSE.md",
+  "displayName": "protolint",
+  "description": "Integrates protolint linter into Visual Studio Code",
+  "categories": [
+    "Linters"
+  ],
+  "keywords": [
+    "multi-root ready",
+    "protocol buffers",
+    "protobuf",
+    ".proto files",
+    "lint",
+    "linter",
+    "linting",
+    "static analysis",
+    "style guide",
+    "code quality",
+    "protolint",
+    "syntax check"
+  ],
+  "galleryBanner": {
+    "color": "#C80000",
+    "theme": "dark"
+  },
+  "main": "dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "protolint.editorLint",
+        "category": "protolint",
+        "icon": "$(checklist)",
+        "title": "Lint protobuf file"
+      },
+      {
+        "command": "protolint.editorAutofix",
+        "category": "protolint",
+        "icon": "$(lightbulb-autofix)",
+        "title": "Autofix protobuf file (breaking changes may occur)"
+      }
+    ],
+    "configuration": {
+      "title": "protolint",
+      "properties": {
+        "protolint.command": {
+          "type": "string",
+          "minLength": 1,
+          "scope": "machine-overridable",
+          "default": "protolint",
+          "markdownDescription": "Command or path to run `protolint`. Relative paths are supported for Workspace Folder settings only.\n\nInstall `protolint` from: https://github.com/yoheimuta/protolint#installation"
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "protolint.editorLint",
+          "when": "resourceScheme =~ /^untitled$|^file$/ && (resourceExtname == .proto || resourceLangId in protolint.supportedLanguageIds)"
+        },
+        {
+          "command": "protolint.editorAutofix",
+          "when": "!editorReadonly && resourceScheme =~ /^untitled$|^file$/ && (resourceExtname == .proto || resourceLangId in protolint.supportedLanguageIds)"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "protolint.editorAutofix",
+          "when": "!editorReadonly && resourceScheme =~ /^untitled$|^file$/ && (resourceExtname == .proto || resourceLangId in protolint.supportedLanguageIds)",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "activationEvents": [
+    "workspaceContains:**/*.proto",
+    "workspaceContains:**/.protolint.yaml",
+    "onLanguage:proto3"
+  ],
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "icon": "icon.png",
+  "homepage": "https://github.com/AlexCannonball/protolint-vscode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlexCannonball/protolint-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AlexCannonball/protolint-vscode/issues"
+  },
+  "type": "module",
+  "scripts": {
+    "watch": "tsc -b --watch",
+    "precompile": "rimraf ./dist ./test-compiled",
+    "compile": "tsc -b ./src",
+    "prettier:check": "npx prettier --check .",
+    "prettier:format": "npx prettier --write .",
+    "lint": "npx eslint . --concurrency=auto",
+    "pretest": "tsc -b ./test",
+    "test": "node ./test-compiled/run-test.js",
+    "vscode:prepublish": "npm run compile && npm run lint"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.37.0",
+    "@stylistic/eslint-plugin": "^5.4.0",
+    "@tsconfig/node22": "^22.0.2",
+    "@types/chai": "^5.2.2",
+    "@types/eslint__js": "^8.42.3",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.18.8",
+    "@types/vscode": "1.103.x",
+    "@vscode/test-cli": "^0.0.11",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.6.2",
+    "chai": "^6.2.0",
+    "eslint": "^9.37.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-import-resolver-typescript": "^4.4.4",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-mocha": "^11.2.0",
+    "eslint-plugin-n": "^17.23.1",
+    "eslint-plugin-perfectionist": "^4.15.1",
+    "eslint-plugin-promise": "^7.2.1",
+    "eslint-plugin-sonarjs": "^3.0.5",
+    "eslint-plugin-unicorn": "^61.0.2",
+    "mocha": "11.6.x",
+    "prettier": "3.6.2",
+    "protolint": "^0.56.4",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.45.0"
+  }
+}

@@ -1,0 +1,93 @@
+// When adding new lines please append them. Otherwise it may disrupt the
+// existing tests.
+syntax = "proto3";
+
+ /*package Fixture.ranges*/package /*package Fixture.ranges*/
+// package Fixture.ranges
+
+/*Fixture.ranges*/ Fixture.ranges/*Fixture.ranges*/;
+
+// import 'google/api/annotations.proto'
+/*import 'google/api/annotations.proto'*/import
+/*import 'google/api/annotations.proto'*/
+
+/*import 'google/api/annotations.proto'*/'google/api/annotations.proto';
+/*service sample_service*//*service sample_service*/
+/*service sample_service*/ service /*service sample_service*/
+
+/*service sample_service*/
+/*service sample_service*/ sample_service {
+  // rpc Get_Data
+  /*rpc Get_Data*/ rpc //rpc
+  /*rpc Get_Data*/ //rpc Get_Data
+
+  /*rpc Get_Data*/ Get_Data(GetDataRequest) returns (Data);
+}
+
+message GetDataRequest{
+  string name = 1;
+}
+/*
+message trickyMsgName*/  message // trickyMsgName
+/*trickyMsgNametrickyMsgName */ /* trickyMsgName*/
+/*trickyMsgName {
+  // comment
+*yet another trickyMsgName
+*/
+
+//trickyMsgName { again
+  // trickyMsgName
+  /* trickyMsgName */ trickyMsgName //That's the one trickyMsgName!
+{
+  //trickyMsgName
+  int32 count = 1;
+}
+
+message FieldNames {
+  message Nested {
+      string comment = 2;
+      required /*trickyMsgName*/
+      //trickyMsgName trickyMsgName
+
+/*trickyMsgName*/ trickyMsgName.trickyMsgName.trickyMsgName
+/*trickyMsgName*/ /*trickyMsgName*/ trickyMsgName /*trickyMsgName*/
+/*trickyMsgName*/ =
+1 [
+        (google.api.field_behavior) = REQUIRED,
+        (google.api.resource_reference) = {
+          type: "library.googleapis.com/Book"
+        }];
+  }
+}
+
+/*enum enumName*/enum // enumName
+//enumName
+  /*enumName*/  /*enumName*/
+/*enumName*/enumName {
+  /*UNKNOWN*/UNKNOWN/*UNKNOWN*/ = 0;
+/*camelCase
+camelCase*/ camelCase/*camelCase*/
+= 1; // camelCase
+}
+
+message Array {
+  // repeated Element element
+  /*repeated Element element*/repeated
+/*repeated Element element*/
+
+  Element //repeated Element element
+  /*repeated Element element*/
+  /*repeated Element element*/ element = 1; //repeated Element element extra long comment
+}
+
+message CleanFieldNames {
+  Fixture.ranges.Array someArray = 1;
+  repeated Fixture.ranges.Array someArrays = 2;
+  repeated
+  Fixture.ranges.Array someMoreArrays = 3;
+  repeated string newTexts = 4;
+  optional int32 newNumber = 5;
+  required
+  string newString = 6;
+  bytes topContent = 7;
+}

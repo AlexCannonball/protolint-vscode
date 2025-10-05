@@ -1,0 +1,4 @@
+lint:
+  rules:
+    remove:
+      - FIELD_NAMES_LOWER_SNAKE_CASE

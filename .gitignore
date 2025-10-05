@@ -1,0 +1,17 @@
+# Ignore the directory with vscode testing instance
+.vscode-test/
+
+# Ignore workspace folder settings files in test fixtures
+fixtures/**/settings.json
+
+# Ignore node_modules
+**/node_modules
+
+# Ignore compiled files directory
+dist/
+
+# Ignore compiled test directory
+test-compiled/
+
+# Ignore packaged VS Code extensions
+*.vsix

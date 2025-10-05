@@ -1,0 +1,9 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+  "search.exclude": {
+    "dist/**": true, // set this to false to include "dist" folder in search results
+    "test-compiled/**": true,
+    ".vscode-test/**": true
+  },
+  "prettier.requireConfig": true
+}

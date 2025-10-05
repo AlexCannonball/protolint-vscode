@@ -1,0 +1,37 @@
+# Ignore everything by default
+*
+
+# Don't ignore directories (so we can look inside them for other files)
+!*/
+
+# Don't ignore JavaScript files
+!**/*.js
+!**/*.cjs
+!**/*.mjs
+
+# Don't ignore JSON files
+!**/*.json
+
+# Ignore npm files
+**/package-lock.json
+**/package.json
+
+# Don't ignore markdown files
+!**/*.md
+
+# Don't ignore TypeScript files
+!**/*.ts
+!**/*.cts
+!**/*.mts
+
+# Ignore .vscode-test
+.vscode-test/
+
+# Ignore compiled files directory
+dist/
+
+# Ignore fixtures directory
+fixtures/
+
+# Ignore compiled test directory
+test-compiled/
