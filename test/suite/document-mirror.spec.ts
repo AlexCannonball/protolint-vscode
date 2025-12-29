@@ -115,7 +115,7 @@ describe('document-mirror:', function () {
           await setDocumentText(
             noFolderDocument.uri,
             initialNoFolderText,
-            true,
+            false,
           );
         }
         if (untitledDocument.getText() !== initialUntitledText) {
