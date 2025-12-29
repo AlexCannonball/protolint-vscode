@@ -22,6 +22,7 @@ const SERVICE = 'service';
 enum ExcludeLineRangesErrorCode {
   RangeBeyondLine = 'RANGE_BEYOND_LINE',
   RangeIntersection = 'RANGE_INTERSECTION',
+  UnexpectedError = 'UNEXPECTED_ERROR',
 }
 
 enum LookupErrorCode {
@@ -199,7 +200,7 @@ class TokenMap {
         return taskRun;
       }
 
-      const value = this.#tokens.get(kind)?.[0].range;
+      const value = this.#tokens.get(kind)?.[0]?.range;
 
       if (value !== undefined) {
         return { result: 'success', value };
@@ -287,8 +288,7 @@ class TokenMap {
   private _fieldType(
     excludeRanges: ITokenRange[],
   ): TResult<TTokenMap, ILookupError> {
-    let [cardinality = undefined] =
-      this.tokens.get(TokenKind.FieldCardinality) ?? [];
+    let [cardinality] = this.tokens.get(TokenKind.FieldCardinality) ?? [];
 
     const searchRanges = excludeLineRanges(this.#line, excludeRanges);
 
@@ -307,7 +307,7 @@ class TokenMap {
         this.#lastIndex,
         cardinality ? 1 : 2,
       );
-      const [firstMatch = undefined, secondMatch = undefined] = matches;
+      const [firstMatch, secondMatch] = matches;
 
       let fieldType = firstMatch;
 
@@ -641,7 +641,7 @@ class TokenMap {
     }
 
     for (const range of searchRanges.value) {
-      const matches = matchRanges(
+      const [match] = matchRanges(
         this.#line,
         range,
         searchText,
@@ -649,9 +649,7 @@ class TokenMap {
         1,
       );
 
-      if (matches.length > 0) {
-        const [match] = matches;
-
+      if (match) {
         ranges.push({ ...match, closed: true });
         this.#lastIndex = match.range.end.character;
 
@@ -730,27 +728,38 @@ function excludeLineRanges(
     (a, b) => a.range.start.character - b.range.start.character,
   );
 
-  const edges: number[] = [];
-
-  edges.unshift(lineRange.start.character);
-  for (const { range } of excludedRanges) {
-    edges.push(range.start.character, range.end.character);
-  }
-  edges.push(lineRange.end.character);
+  const edges: number[] = [
+    lineRange.start.character,
+    ...excludedRanges.flatMap(({ range: { end, start } }) => [
+      start.character,
+      end.character,
+    ]),
+    lineRange.end.character,
+  ];
 
   const value: Range[] = [];
 
   for (let index = 0; index < edges.length; index += 2) {
-    if (edges[index] > edges[index + 1]) {
+    const startCharacter = edges[index];
+    const endCharacter = edges[index + 1];
+
+    if (startCharacter === undefined || endCharacter === undefined) {
+      return {
+        error: { code: ExcludeLineRangesErrorCode.UnexpectedError },
+        result: 'error',
+      };
+    }
+
+    if (startCharacter > endCharacter) {
       return {
         error: { code: ExcludeLineRangesErrorCode.RangeIntersection },
         result: 'error',
       };
     }
 
-    if (edges[index] !== edges[index + 1]) {
+    if (startCharacter !== endCharacter) {
       value.push(
-        new Range(lineNumber, edges[index], lineNumber, edges[index + 1]),
+        new Range(lineNumber, startCharacter, lineNumber, endCharacter),
       );
     }
   }

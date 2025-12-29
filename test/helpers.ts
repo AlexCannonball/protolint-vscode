@@ -513,6 +513,14 @@ type TExpectedActions = (
   diagnostic: ProtolintDiagnostic,
 ) => CodeAction[];
 
+function extractText(message: TParsedMessage, property: string): string {
+  if (message[property] === undefined) {
+    expect.fail(`${property} must be set`);
+  }
+
+  return message[property];
+}
+
 const replaceCodeAction: TExpectedActions = function (
   uri,
   { parsedMessage, range },
@@ -521,7 +529,7 @@ const replaceCodeAction: TExpectedActions = function (
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
-  action.edit.replace(uri, range, parsedMessage[FIX_KEY]);
+  action.edit.replace(uri, range, extractText(parsedMessage, FIX_KEY));
 
   return [action];
 };
@@ -557,7 +565,7 @@ const fixIndentActions: TExpectedActions = function (uri, diagnostic) {
   fixIndent.edit.replace(
     uri,
     diagnostic.range,
-    diagnostic.parsedMessage[FIX_KEY],
+    extractText(diagnostic.parsedMessage, FIX_KEY),
   );
 
   return [...fixAllIndentsAction(uri, diagnostic), fixIndent];
@@ -567,7 +575,7 @@ const enumFieldAppendAction: TExpectedActions = function (
   uri,
   { parsedMessage, range: { end } },
 ) {
-  const suffix = '_' + parsedMessage[FIX_KEY];
+  const suffix = '_' + extractText(parsedMessage, FIX_KEY);
 
   const action = new CodeAction('', CodeActionKind.QuickFix);
 
@@ -582,7 +590,7 @@ const enumFieldPrependAction: TExpectedActions = function (
   uri,
   { parsedMessage, range: { start } },
 ) {
-  const prefix = parsedMessage[FIX_KEY] + '_';
+  const prefix = extractText(parsedMessage, FIX_KEY) + '_';
   const action = new CodeAction('', CodeActionKind.QuickFix);
 
   action.isPreferred = true;
@@ -593,7 +601,7 @@ const enumFieldPrependAction: TExpectedActions = function (
 };
 
 const renameFileAction: TExpectedActions = function (uri, { parsedMessage }) {
-  const fixedUri = Uri.joinPath(uri, '..', parsedMessage[FIX_KEY]);
+  const fixedUri = Uri.joinPath(uri, '..', extractText(parsedMessage, FIX_KEY));
 
   /** This is to populate an internal {@link Uri} property with the correct value.
    *

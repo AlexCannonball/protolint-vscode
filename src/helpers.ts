@@ -64,14 +64,15 @@ async function fixIndents({ options }: TextEditor): Promise<void> {
 async function locateExecutable(): Promise<
   TResult<string, ILocateExecutableError>
 > {
-  const userInput = await window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    openLabel: 'Use for linting',
-  });
+  const [uri] =
+    (await window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      openLabel: 'Use for linting',
+    })) ?? [];
 
-  if (userInput === undefined || userInput.length === 0) {
+  if (uri === undefined) {
     return {
       error: {
         code: LocateExecutableErrorCode.Dismiss,
@@ -80,11 +81,9 @@ async function locateExecutable(): Promise<
     };
   }
 
-  const [{ fsPath: value }] = userInput;
-
   return {
     result: 'success',
-    value,
+    value: uri.fsPath,
   };
 }
 

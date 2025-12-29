@@ -31,8 +31,10 @@ const CONFIG_SECTION = 'protolint';
 const EDITOR_COMMAND_FIX_INDENTS = 'protolint.editorFixIndents';
 const {
   commands: [
-    { command: EDITOR_COMMAND_LINT },
-    { command: EDITOR_COMMAND_AUTOFIX },
+    { command: EDITOR_COMMAND_LINT } = { command: 'protolint.editorLint' },
+    { command: EDITOR_COMMAND_AUTOFIX } = {
+      command: 'protolint.editorAutofix',
+    },
   ],
 } = contributes;
 

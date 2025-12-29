@@ -208,7 +208,14 @@ describe('config:', function () {
       let relativePath: string;
 
       before('Executable path tests setup', function () {
-        [folder] = getWorkspaceFolders();
+        const [element] = getWorkspaceFolders();
+
+        if (element === undefined) {
+          expect.fail(
+            'There must be a workspace folder for testing relative executable path',
+          );
+        }
+        folder = element;
 
         expect(
           folder,
