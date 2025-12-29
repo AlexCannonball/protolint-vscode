@@ -67,8 +67,8 @@ type TDebugTimeout<T = typeof process.env> = Exclude<T[keyof T], undefined>;
  * Otherwise {@link timeout}.
  */
 function debugTimeout<
-  T extends
-    Required<MochaOptions>['timeout'] = Required<MochaOptions>['timeout'],
+  T extends Required<MochaOptions>['timeout'] =
+    Required<MochaOptions>['timeout'],
 >(timeout: T): T | TDebugTimeout {
   return DEBUG_TIMEOUT ?? timeout;
 }
@@ -365,15 +365,15 @@ const statusChangeUnavailableAssertion: TFiredEventAssertion<
 };
 
 type TConfigurationAffectedAssertion<
-  T extends
-    typeof workspace.onDidChangeConfiguration = typeof workspace.onDidChangeConfiguration,
+  T extends typeof workspace.onDidChangeConfiguration =
+    typeof workspace.onDidChangeConfiguration,
 > = (
   ...parameters: TConfigurationAffectedParameters<T>
 ) => TFiredEventAssertion<T>;
 
 type TConfigurationAffectedParameters<
-  T extends
-    typeof workspace.onDidChangeConfiguration = typeof workspace.onDidChangeConfiguration,
+  T extends typeof workspace.onDidChangeConfiguration =
+    typeof workspace.onDidChangeConfiguration,
 > =
   Parameters<TFiredEventAssertion<T>> extends [infer E]
     ? E extends ConfigurationChangeEvent
