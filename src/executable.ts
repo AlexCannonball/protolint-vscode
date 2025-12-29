@@ -72,9 +72,8 @@ function isSpawnError(value: unknown): value is { code: string } & Error {
  */
 function mirrored<
   This extends Executable = Executable,
-  Return extends ReturnType<
-    Executable['lint' | typeof AUTOFIX_METHOD]
-  > = ReturnType<Executable['lint' | typeof AUTOFIX_METHOD]>,
+  Return extends ReturnType<Executable['lint' | typeof AUTOFIX_METHOD]> =
+    ReturnType<Executable['lint' | typeof AUTOFIX_METHOD]>,
 >(
   target: (this: This, ...arguments_: TExecuteSignature) => Return,
   _context: ClassMethodDecoratorContext<

@@ -102,9 +102,8 @@ type TExecuteCommand = typeof commands.executeCommand extends (
 ) => infer Result
   ? <
       CommandName extends Command & keyof TExtensionCommands,
-      Handler extends (
-        ...arguments_: never[]
-      ) => unknown = TExtensionCommands[CommandName],
+      Handler extends (...arguments_: never[]) => unknown =
+        TExtensionCommands[CommandName],
     >(
       command: CommandName,
       ...rest: Parameters<Handler> extends Rest ? Parameters<Handler> : never
