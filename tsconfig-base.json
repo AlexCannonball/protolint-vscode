@@ -1,15 +1,23 @@
 {
   "extends": "@tsconfig/node22/tsconfig.json",
   "compilerOptions": {
-    "removeComments": true,
-    "noImplicitAny": true,
-    "strictNullChecks": true,
+    /* Projects */
+    "composite": true,
+
+    /* Modules */
+    "resolveJsonModule": true,
+
+    /* Emit */
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "composite": true,
+    "removeComments": true,
 
-    "skipLibCheck": true,
-    "resolveJsonModule": true
+    /* Type Checking */
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+
+    /* Completeness */
+    "skipLibCheck": true
   }
 }
