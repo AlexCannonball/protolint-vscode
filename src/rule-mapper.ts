@@ -464,7 +464,7 @@ const RULE_MAP: ReadonlyMap<string, IMapper> = new Map<string, IMapper>([
        * At the moment ignoring the incorrect value due to the bug https://github.com/yoheimuta/protolint/issues/349
        */
       pattern: new RegExp(
-        `^Found an incorrect indentation style ".*"\\. "(?<${FIX_KEY}>.*)" is correct\\.$`,
+        String.raw`^Found an incorrect indentation style ".*"\. "(?<${FIX_KEY}>.*)" is correct\.$`,
       ),
     },
   ],
@@ -474,7 +474,7 @@ const RULE_MAP: ReadonlyMap<string, IMapper> = new Map<string, IMapper>([
       diagnosticBase: lineLength,
       /** @see https://github.com/yoheimuta/protolint/blob/v0.43.2/internal/addon/rules/maxLineLengthRule.go#L106 */
       pattern: new RegExp(
-        `^The line length is \\d+, but it must be shorter than (?<${RANGE_KEY}>\\d+)$`,
+        String.raw`^The line length is \d+, but it must be shorter than (?<${RANGE_KEY}>\d+)$`,
       ),
     },
   ],
@@ -508,7 +508,7 @@ const RULE_MAP: ReadonlyMap<string, IMapper> = new Map<string, IMapper>([
       diagnosticBase: tokenRange,
       /** @see https://github.com/yoheimuta/protolint/blob/v0.43.2/internal/addon/rules/packageNameLowerCaseRule.go#L67 */
       pattern: new RegExp(
-        `^Package name "(?<${RANGE_KEY}>.+)" must not contain any uppercase letter\\. Consider to change like "(?<${FIX_KEY}>.+)"\\.$`,
+        String.raw`^Package name "(?<${RANGE_KEY}>.+)" must not contain any uppercase letter\. Consider to change like "(?<${FIX_KEY}>.+)"\.$`,
       ),
       tokenKind: TokenKind.PackageName,
     },
@@ -529,7 +529,7 @@ const RULE_MAP: ReadonlyMap<string, IMapper> = new Map<string, IMapper>([
       diagnosticBase: tokenRange,
       /** @see https://github.com/yoheimuta/protolint/blob/v0.43.2/internal/addon/rules/quoteConsistentRule.go#L68 */
       pattern: new RegExp(
-        `^Quoted string should be (?<${FIX_KEY}>.+) but was (?<${RANGE_KEY}>.+)\\.$`,
+        String.raw`^Quoted string should be (?<${FIX_KEY}>.+) but was (?<${RANGE_KEY}>.+)\.$`,
       ),
       tokenKind: TokenKind.FieldName,
     },
