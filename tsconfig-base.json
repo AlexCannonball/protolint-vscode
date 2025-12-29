@@ -16,6 +16,7 @@
     /* Type Checking */
     "noImplicitAny": true,
     "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
 
     /* Completeness */
     "skipLibCheck": true

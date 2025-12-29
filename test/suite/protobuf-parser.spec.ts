@@ -74,32 +74,33 @@ describe('protobuf-parser:', function () {
     describe('when an input range covers the line end', function () {
       it(`shouldn't return a range for the line end`, function () {
         const line = document.lineAt(52);
-        const inputRanges = prepareRanges(document, [
-          {
-            closed: true,
-            range: line.range.with({
-              end: line.range.end.with({ character: 17 }),
-            }),
-          },
-          {
-            closed: true,
-            range: line.range.with({
-              end: line.range.end.with({ character: 35 }),
-              start: line.range.start.with({ character: 18 }),
-            }),
-          },
-          {
-            closed: true,
-            range: line.range.with({
-              end: line.range.end.with({ character: 67 }),
-              start: line.range.start.with({ character: 50 }),
-            }),
-          },
-        ]);
+
+        const first = {
+          closed: true,
+          range: line.range.with({
+            end: line.range.end.with({ character: 17 }),
+          }),
+        };
+        const second = {
+          closed: true,
+          range: line.range.with({
+            end: line.range.end.with({ character: 35 }),
+            start: line.range.start.with({ character: 18 }),
+          }),
+        };
+        const third = {
+          closed: true,
+          range: line.range.with({
+            end: line.range.end.with({ character: 67 }),
+            start: line.range.start.with({ character: 50 }),
+          }),
+        };
+
+        const inputRanges = prepareRanges(document, [first, second, third]);
         const actualRanges = excludeLineRanges(line, inputRanges);
         const expectedRanges: Range[] = [
-          new Range(inputRanges[0].range.end, inputRanges[1].range.start),
-          new Range(inputRanges[1].range.end, inputRanges[2].range.start),
+          new Range(first.range.end, second.range.start),
+          new Range(second.range.end, third.range.start),
         ];
 
         expect(

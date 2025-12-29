@@ -143,7 +143,7 @@ const indent: TDiagnosticRangeParser = function (document, item) {
     let startCharacter = column - 1;
 
     for (let index = column - 2; index >= 0; index--) {
-      if (!/\s/.test(text[index])) {
+      if (!/\s/.test(text.charAt(index))) {
         break;
       }
 
@@ -232,7 +232,7 @@ const enumFieldPrefixActions: TCodeActionsBuilder = function (
 ) {
   const { error, parsedMessage, range } = diagnostic;
 
-  if (parsedMessage[FIX_KEY]) {
+  if (parsedMessage[FIX_KEY] !== undefined) {
     const prefix = parsedMessage[FIX_KEY] + '_';
     const action = new CodeAction(
       `Add prefix '${prefix}'`,
@@ -256,7 +256,7 @@ const enumFieldPrefixActions: TCodeActionsBuilder = function (
 const tokenNameActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   const { error, parsedMessage, range } = diagnostic;
 
-  if (parsedMessage[FIX_KEY]) {
+  if (parsedMessage[FIX_KEY] !== undefined) {
     const action = new CodeAction(
       `Set to '${parsedMessage[FIX_KEY]}'`,
       CodeActionKind.QuickFix,
@@ -283,7 +283,7 @@ const enumZeroActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
     range: { end },
   } = diagnostic;
 
-  if (parsedMessage[FIX_KEY]) {
+  if (parsedMessage[FIX_KEY] !== undefined) {
     const suffix = '_' + parsedMessage[FIX_KEY];
     const action = new CodeAction(
       `Add suffix '${suffix}'`,
@@ -307,7 +307,7 @@ const enumZeroActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
 const fileNameActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   const { error, parsedMessage } = diagnostic;
 
-  if (parsedMessage[FIX_KEY]) {
+  if (parsedMessage[FIX_KEY] !== undefined) {
     const action = new CodeAction(
       `Rename the file to '${parsedMessage[FIX_KEY]}'`,
       CodeActionKind.QuickFix,
@@ -353,7 +353,7 @@ const serviceSuffixActions: TCodeActionsBuilder = function (
   } = diagnostic;
   const suffix = parsedMessage[FIX_KEY];
 
-  if (suffix) {
+  if (suffix !== undefined) {
     const action = new CodeAction(
       `Add suffix '${suffix}'`,
       CodeActionKind.QuickFix,
