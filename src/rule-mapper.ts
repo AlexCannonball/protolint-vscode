@@ -105,6 +105,8 @@ function defaultRange(document: TextDocument, { line }: IJsonLintsItem): Range {
   }
 }
 
+const PROTOLINT_QUICK_FIX = CodeActionKind.QuickFix.append('protolint');
+
 const tokenRange: TDiagnosticRangeParser = function (
   document,
   item,
@@ -165,7 +167,7 @@ const indent: TDiagnosticRangeParser = function (document, item) {
 const indentActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   const value: CodeAction[] = [];
 
-  const fixAll = new CodeAction('Fix all indents', CodeActionKind.QuickFix);
+  const fixAll = new CodeAction('Fix all indents', PROTOLINT_QUICK_FIX);
 
   fixAll.isPreferred = true;
   fixAll.diagnostics = [diagnostic];
@@ -180,7 +182,7 @@ const indentActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   const { parsedMessage, range } = diagnostic;
 
   if (FIX_KEY in parsedMessage && !range.start.isEqual(range.end)) {
-    const fixCurrent = new CodeAction(`Fix indent`, CodeActionKind.QuickFix);
+    const fixCurrent = new CodeAction(`Fix indent`, PROTOLINT_QUICK_FIX);
 
     fixCurrent.edit = new WorkspaceEdit();
     fixCurrent.edit.replace(uri, range, parsedMessage[FIX_KEY]);
@@ -236,7 +238,7 @@ const enumFieldPrefixActions: TCodeActionsBuilder = function (
     const prefix = parsedMessage[FIX_KEY] + '_';
     const action = new CodeAction(
       `Add prefix '${prefix}'`,
-      CodeActionKind.QuickFix,
+      PROTOLINT_QUICK_FIX,
     );
 
     action.isPreferred = true;
@@ -259,7 +261,7 @@ const tokenNameActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   if (parsedMessage[FIX_KEY] !== undefined) {
     const action = new CodeAction(
       `Set to '${parsedMessage[FIX_KEY]}'`,
-      CodeActionKind.QuickFix,
+      PROTOLINT_QUICK_FIX,
     );
 
     action.isPreferred = true;
@@ -287,7 +289,7 @@ const enumZeroActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
     const suffix = '_' + parsedMessage[FIX_KEY];
     const action = new CodeAction(
       `Add suffix '${suffix}'`,
-      CodeActionKind.QuickFix,
+      PROTOLINT_QUICK_FIX,
     );
 
     action.isPreferred = true;
@@ -310,7 +312,7 @@ const fileNameActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   if (parsedMessage[FIX_KEY] !== undefined) {
     const action = new CodeAction(
       `Rename the file to '${parsedMessage[FIX_KEY]}'`,
-      CodeActionKind.QuickFix,
+      PROTOLINT_QUICK_FIX,
     );
 
     action.isPreferred = true;
@@ -332,7 +334,7 @@ const fileNameActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
 
 const requiredActions: TCodeActionsBuilder = function ({ uri }, diagnostic) {
   const { range } = diagnostic;
-  const action = new CodeAction(`Remove 'required'`, CodeActionKind.QuickFix);
+  const action = new CodeAction(`Remove 'required'`, PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
@@ -356,7 +358,7 @@ const serviceSuffixActions: TCodeActionsBuilder = function (
   if (suffix !== undefined) {
     const action = new CodeAction(
       `Add suffix '${suffix}'`,
-      CodeActionKind.QuickFix,
+      PROTOLINT_QUICK_FIX,
     );
 
     action.isPreferred = true;
@@ -647,6 +649,7 @@ const testing = {
   defaultRange,
   diagnosticBase,
   FIX_KEY,
+  PROTOLINT_QUICK_FIX,
   RANGE_KEY,
 };
 
