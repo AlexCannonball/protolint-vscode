@@ -4,7 +4,6 @@ import { fileURLToPath } from 'node:url';
 import { expect } from 'chai';
 import {
   CodeAction,
-  CodeActionKind,
   commands,
   ConfigurationTarget,
   extensions,
@@ -506,7 +505,7 @@ async function setDocumentText(
   }
 }
 
-const { FIX_KEY } = testing;
+const { FIX_KEY, PROTOLINT_QUICK_FIX } = testing;
 
 type TExpectedActions = (
   uri: Uri,
@@ -525,7 +524,7 @@ const replaceCodeAction: TExpectedActions = function (
   uri,
   { parsedMessage, range },
 ) {
-  const action = new CodeAction('', CodeActionKind.QuickFix);
+  const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
@@ -535,7 +534,7 @@ const replaceCodeAction: TExpectedActions = function (
 };
 
 const deleteCodeAction: TExpectedActions = function (uri, { range }) {
-  const action = new CodeAction('', CodeActionKind.QuickFix);
+  const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
@@ -545,7 +544,7 @@ const deleteCodeAction: TExpectedActions = function (uri, { range }) {
 };
 
 const fixAllIndentsAction: TExpectedActions = function () {
-  const action = new CodeAction('', CodeActionKind.QuickFix);
+  const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.command = {
@@ -558,7 +557,7 @@ const fixAllIndentsAction: TExpectedActions = function () {
 };
 
 const fixIndentActions: TExpectedActions = function (uri, diagnostic) {
-  const fixIndent = new CodeAction('', CodeActionKind.QuickFix);
+  const fixIndent = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   fixIndent.isPreferred = undefined;
   fixIndent.edit = new WorkspaceEdit();
@@ -577,7 +576,7 @@ const enumFieldAppendAction: TExpectedActions = function (
 ) {
   const suffix = '_' + extractText(parsedMessage, FIX_KEY);
 
-  const action = new CodeAction('', CodeActionKind.QuickFix);
+  const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
@@ -591,7 +590,7 @@ const enumFieldPrependAction: TExpectedActions = function (
   { parsedMessage, range: { start } },
 ) {
   const prefix = extractText(parsedMessage, FIX_KEY) + '_';
-  const action = new CodeAction('', CodeActionKind.QuickFix);
+  const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
@@ -609,7 +608,7 @@ const renameFileAction: TExpectedActions = function (uri, { parsedMessage }) {
    */
   fixedUri.toString();
 
-  const action = new CodeAction('', CodeActionKind.QuickFix);
+  const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
   action.isPreferred = true;
   action.edit = new WorkspaceEdit();
@@ -643,8 +642,10 @@ async function codeActionAssertion(
   actualDiagnostic: ProtolintDiagnostic,
 ): Promise<void> {
   const actualActions = await getCodeActions(uri, expectedRange);
-  const assertableActions = actualActions.filter((_action, index) =>
-    actionIndexes.includes(index),
+  const assertableActions = actualActions.filter(
+    (action, index) =>
+      actionIndexes.includes(index) &&
+      action.kind?.contains(PROTOLINT_QUICK_FIX) === true,
   );
   const expectedActions = expectedCodeActions(uri, actualDiagnostic);
 
