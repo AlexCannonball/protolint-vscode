@@ -1,3 +1,4 @@
+import { url as inspectorUrl } from 'node:inspector';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -42,11 +43,12 @@ import type { ITesting } from '../dist/extension.js';
 import type { TExtractListener } from '../dist/helpers.js';
 import type { TParsedMessage } from '../dist/rule-mapper.js';
 
+type TMochaTimeout = Required<MochaOptions>['timeout'];
+
 /**
- * The user environment value for modifying Mocha's timeouts in debugging
- * scenarios.
+ * The value for modifying Mocha's timeouts in debugging scenarios.
  */
-const { DEBUG_TIMEOUT } = process.env;
+const DEBUG_TIMEOUT: TMochaTimeout = 0;
 
 const PROJECT_ROOT = path.resolve(import.meta.dirname, '..');
 const FIXTURES_DIRECTORY = Uri.joinPath(Uri.file(PROJECT_ROOT), 'fixtures');
@@ -54,22 +56,17 @@ const RULES_FIXTURE_BASENAME = 'rule.mapper.proto';
 const RULES_FIXTURE = Uri.joinPath(FIXTURES_DIRECTORY, RULES_FIXTURE_BASENAME);
 const INVALID_EXECUTABLE_COMMAND = '_';
 
-type TDebugTimeout<T = typeof process.env> = Exclude<T[keyof T], undefined>;
-
 /**
  * Overrides Mocha timeouts for debugging purposes. If a particular timeout
  * shouldn't be changed when debugging, don't use this function for setting the
  * timeout.
  *
  * @param timeout The desired timeout for non-debugging scenarios.
- * @returns If {@link DEBUG_TIMEOUT} is set, its value.
+ * @returns {@link DEBUG_TIMEOUT}, if Node.js inspector is attached.
  * Otherwise {@link timeout}.
  */
-function debugTimeout<
-  T extends Required<MochaOptions>['timeout'] =
-    Required<MochaOptions>['timeout'],
->(timeout: T): T | TDebugTimeout {
-  return DEBUG_TIMEOUT ?? timeout;
+function debugTimeout(timeout: TMochaTimeout): TMochaTimeout {
+  return inspectorUrl() === undefined ? timeout : DEBUG_TIMEOUT;
 }
 
 function getWorkspaceFolders(): readonly WorkspaceFolder[] {

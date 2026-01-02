@@ -24,9 +24,6 @@
         "--extensionDevelopmentPath=${workspaceFolder}",
         "--extensionTestsPath=${workspaceFolder}/test-compiled/suite/index.js"
       ],
-      "env": {
-        "DEBUG_TIMEOUT": "0" // Adjust Mocha timeout for debugging tests
-      },
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
         "${workspaceFolder}/test-compiled/**/*.js"
