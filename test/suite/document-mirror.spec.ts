@@ -167,6 +167,8 @@ describe('document-mirror:', function () {
         await using outerReflection = await getReflection(outerDocument);
         await using innerReflection = await getReflection(innerDocument);
 
+        // The test is probably flaky at this point as of January 2026.
+        // If confirmed via CI test run failure, needs deflaking.
         expect(
           innerReflection.fileUri
             .toString()
@@ -212,6 +214,8 @@ describe('document-mirror:', function () {
 
         await using innerReflection = await getReflection(innerDocument);
 
+        // The test is probably flaky at this point as of January 2026.
+        // If confirmed via CI test run failure, needs deflaking.
         expect(
           innerReflection.cwd,
           `The reflection cwd must be correct after closing the nested Workspace Folder`,

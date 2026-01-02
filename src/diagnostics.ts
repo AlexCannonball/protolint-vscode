@@ -233,7 +233,7 @@ class Diagnostics {
           );
 
         for (const document of affectedDocuments) {
-          void diagnostics.refresh(document);
+          await diagnostics.refresh(document);
         }
       },
       undefined,
