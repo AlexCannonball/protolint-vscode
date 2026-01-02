@@ -6,12 +6,15 @@ import Mocha from 'mocha';
 
 import { DEBUG_TIMEOUT } from '../helpers.js';
 
+const { CI } = process.env;
+const reporter = CI === 'true' ? 'spec' : 'min';
+
 async function run(): Promise<void> {
   const mocha = new Mocha({
     checkLeaks: true,
     color: true,
     inlineDiffs: true,
-    reporter: 'min', // use 'spec' for a detailed test report
+    reporter,
     timeout: DEBUG_TIMEOUT,
     ui: 'bdd',
   });
