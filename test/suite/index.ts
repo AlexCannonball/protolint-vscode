@@ -4,7 +4,7 @@ import path from 'node:path';
 
 import Mocha from 'mocha';
 
-import { DEBUG_TIMEOUT } from '../helpers.js';
+import { debugTimeout } from '../helpers.js';
 
 const { CI } = process.env;
 const reporter = CI === 'true' ? 'spec' : 'min';
@@ -15,7 +15,7 @@ async function run(): Promise<void> {
     color: true,
     inlineDiffs: true,
     reporter,
-    timeout: DEBUG_TIMEOUT,
+    timeout: debugTimeout(4000),
     ui: 'bdd',
   });
 
