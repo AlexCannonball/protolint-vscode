@@ -309,8 +309,12 @@ async function resetCommandConfig(): Promise<void> {
   }
 
   if (globalValue !== executableCommand) {
+    if (executableCache.global._onDidSetCommand === undefined) {
+      expect.fail(`The executable command setting events must be available`);
+    }
+
     const globalConfigurationChange = promisifyEvent(
-      workspace.onDidChangeConfiguration,
+      executableCache.global._onDidSetCommand,
     );
 
     await configuration.update(

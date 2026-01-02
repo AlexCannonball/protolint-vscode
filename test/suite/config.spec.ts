@@ -50,6 +50,7 @@ describe('config:', function () {
     await closeDocuments();
     executablePath = getExecutablePath();
 
+    await resetCommandConfig();
     await resetWorkspaceFolders();
   });
 
@@ -62,10 +63,6 @@ describe('config:', function () {
   describe('#PathCache', function () {
     // #region Executable tests
     describe('executables', function () {
-      beforeEach('executable test setup', async function () {
-        await resetCommandConfig();
-      });
-
       afterEach('executable test cleanup', async function () {
         await resetCommandConfig();
       });
