@@ -648,11 +648,9 @@ async function codeActionAssertion(
   actualDiagnostic: ProtolintDiagnostic,
 ): Promise<void> {
   const actualActions = await getCodeActions(uri, expectedRange);
-  const assertableActions = actualActions.filter(
-    (action, index) =>
-      actionIndexes.includes(index) &&
-      action.kind?.contains(PROTOLINT_QUICK_FIX) === true,
-  );
+  const assertableActions = actualActions
+    .filter((action) => action.kind?.contains(PROTOLINT_QUICK_FIX) === true)
+    .filter((_action, index) => actionIndexes.includes(index));
   const expectedActions = expectedCodeActions(uri, actualDiagnostic);
 
   expect(
