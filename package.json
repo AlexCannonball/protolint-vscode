@@ -130,7 +130,7 @@
     "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-sonarjs": "^3.0.5",
     "eslint-plugin-unicorn": "^62.0.0",
-    "mocha": "11.6.x",
+    "mocha": "11.7.x",
     "prettier": "3.7.4",
     "protolint": "^0.56.4",
     "rimraf": "^6.1.2",
