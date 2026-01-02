@@ -1,4 +1,4 @@
-import { constants, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -420,11 +420,7 @@ async function createFile(
   }
 
   try {
-    const { O_CREAT, O_TRUNC, O_WRONLY, UV_FS_O_FILEMAP } = constants;
-
-    await writeFile(fileUri.fsPath, data, {
-      flag: UV_FS_O_FILEMAP | O_CREAT | O_WRONLY | O_TRUNC,
-    });
+    await writeFile(fileUri.fsPath, data, { flag: 'w' });
   } catch (error) {
     return {
       error: {
