@@ -609,8 +609,13 @@ const renameFileAction: TExpectedActions = function (uri, { parsedMessage }) {
   /** This is to populate an internal {@link Uri} property with the correct value.
    *
    * @see {@link https://github.com/microsoft/vscode/issues/224064}
+   *
+   * Due to some reason the issue isn't reproduced via `macos-latest` OS in
+   * GitHub Actions.
    */
-  fixedUri.toString();
+  if (process.platform !== 'darwin') {
+    fixedUri.toString();
+  }
 
   const action = new CodeAction('', PROTOLINT_QUICK_FIX);
 
