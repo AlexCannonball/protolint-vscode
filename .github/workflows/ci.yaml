@@ -34,6 +34,9 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            command-prefix: xvfb-run -a
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -45,8 +48,4 @@ jobs:
       - name: Install dependencies
         run: npm ci --prefer-offline --no-audit --no-fund
       - name: Integration tests
-        run: xvfb-run -a npm test
-        if: runner.os == 'Linux'
-      - name: Integration testing
-        run: npm test
-        if: runner.os != 'Linux'
+        run: ${{ matrix.command-prefix }} npm test
