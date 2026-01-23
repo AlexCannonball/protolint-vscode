@@ -55,13 +55,6 @@ class ProtolintActionProvider implements CodeActionProvider {
   }
 }
 
-function isAutoDisable(argument: unknown): argument is TAutoDisableMode {
-  return (
-    typeof argument === 'string' &&
-    AUTO_DISABLE_MODES.includes(argument as TAutoDisableMode)
-  );
-}
-
 /**
  * Manages fixing code issues performed by `protolint`.
  *
@@ -183,6 +176,13 @@ class Fixer {
       );
     }
   }
+}
+
+function isAutoDisable(argument: unknown): argument is TAutoDisableMode {
+  return (
+    typeof argument === 'string' &&
+    AUTO_DISABLE_MODES.includes(argument as TAutoDisableMode)
+  );
 }
 
 export { Fixer };
