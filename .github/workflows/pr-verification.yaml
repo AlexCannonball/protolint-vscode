@@ -1,0 +1,32 @@
+name: Pull Request Verification
+
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  compile-and-lint:
+    name: Compile and lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          cache: "npm"
+          node-version-file: "package.json"
+      - name: Install dependencies
+        run: npm clean-install --prefer-offline --no-audit --no-fund
+      - name: Transpile via TypeScript
+        run: npm run compile
+      - name: Prettier
+        run: npm run prettier:check
+      - name: ESlint
+        run: npm run lint
+
+  call-tests:
+    name: Integration tests passed
+    uses: ./.github/workflows/test.yaml
+    needs: compile-and-lint
