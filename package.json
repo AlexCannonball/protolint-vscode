@@ -6,7 +6,7 @@
     "node": ">=22.17.0",
     "vscode": "^1.103.0"
   },
-  "license": "SEE LICENSE IN LICENSE.md",
+  "license": "MIT",
   "displayName": "protolint",
   "description": "Integrates protolint linter into Visual Studio Code",
   "categories": [
@@ -27,8 +27,8 @@
     "syntax check"
   ],
   "galleryBanner": {
-    "color": "#C80000",
-    "theme": "dark"
+    "color": "#F0F0F0",
+    "theme": "light"
   },
   "main": "dist/extension.js",
   "contributes": {
