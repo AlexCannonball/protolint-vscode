@@ -4,6 +4,9 @@
 # Don't ignore the license file
 !LICENSE.md
 
+# Don't ignore the changelog file
+!CHANGELOG.md
+
 # Don't ignore the icon file
 !icon.png
 
