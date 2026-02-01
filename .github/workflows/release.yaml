@@ -18,6 +18,9 @@ jobs:
     needs: call-tests
     runs-on: ubuntu-latest
     environment: production
+    concurrency:
+      group: release-${{ github.ref }}
+      cancel-in-progress: false
     permissions:
       contents: write # to push git tags, update CHANGELOG.md and create GitHub Releases
       issues: write # to post comments on issues resolved in the new release
