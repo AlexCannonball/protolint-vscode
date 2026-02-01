@@ -25,8 +25,6 @@ jobs:
       contents: write # to push git tags, update CHANGELOG.md and create GitHub Releases
       issues: write # to post comments on issues resolved in the new release
       pull-requests: write # to post comments on pull requests included in the new release
-      id-token: write # to authenticate with Sigstore for OIDC build provenance
-      attestations: write # to create and store the build provenance attestations for the .vsix
     steps:
       - name: Generate App Token
         uses: actions/create-github-app-token@v1
@@ -69,15 +67,7 @@ jobs:
           --package semantic-release-vsce \
           --package @semantic-release/git \
           --package @semantic-release/github \
-          --package @semantic-release/exec \
           semantic-release
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
-
-      - name: Generate build attestation
-        # Prevents error if semantic-release skips versioning (e.g. only chore commits)
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: actions/attest-build-provenance@v1
-        with:
-          subject-path: "*.vsix"
