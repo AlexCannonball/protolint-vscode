@@ -28,10 +28,19 @@ jobs:
       id-token: write # to authenticate with Sigstore for OIDC build provenance
       attestations: write # to create and store the build provenance attestations for the .vsix
     steps:
+      - name: Generate App Token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -60,9 +69,10 @@ jobs:
           --package semantic-release-vsce \
           --package @semantic-release/git \
           --package @semantic-release/github \
+          --package @semantic-release/exec \
           semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Generate build attestation
