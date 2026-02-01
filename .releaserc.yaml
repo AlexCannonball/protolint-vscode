@@ -61,4 +61,4 @@ plugins:
     - assets:
         - label: "Extension VSIX"
           path: "*.vsix"
-      draft: true
+      draftRelease: true
