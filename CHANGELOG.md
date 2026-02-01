@@ -1,3 +1,9 @@
+## [1.1.1](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.0...v1.1.1) (2026-02-01)
+
+### 🐛 Bug Fixes
+
+* include CHANGELOG.md in the distributed VSIX package ([0627147](https://github.com/AlexCannonball/protolint-vscode/commit/0627147e5a20ed09ac0914124374e2e524cba066))
+
 ## [1.1.0](https://github.com/AlexCannonball/protolint-vscode/compare/v1.0.0...v1.1.0) (2026-02-01)
 
 ### ✨ Features
