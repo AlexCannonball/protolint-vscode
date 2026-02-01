@@ -11,7 +11,9 @@ const { icon, main } = package_;
 describe(`'.vscodeignore' and package files`, function () {
   let actualFiles: string[];
   const licenseFile = 'LICENSE.md';
+  const changelog = 'CHANGELOG.md';
   const mandatoryFiles = new Set([
+    changelog,
     icon,
     licenseFile,
     main,
@@ -33,6 +35,13 @@ describe(`'.vscodeignore' and package files`, function () {
       actualFiles,
       `The extension package must include the license file '${licenseFile}'`,
     ).to.include(licenseFile);
+  });
+
+  it(`the changelog file should be included`, function () {
+    expect(
+      actualFiles,
+      `The extension package must include the changelog file '${changelog}'`,
+    ).to.include(changelog);
   });
 
   it(`'main' application file should be included`, function () {
