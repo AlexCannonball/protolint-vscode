@@ -62,3 +62,6 @@ plugins:
         - label: "Extension VSIX"
           path: "*.vsix"
       draft: true
+
+  - - "@semantic-release/exec"
+    - successCmd: 'echo "new_release_published=true" >> $GITHUB_OUTPUT'
