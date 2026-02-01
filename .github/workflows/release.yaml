@@ -17,25 +17,54 @@ jobs:
     name: Release
     needs: call-tests
     runs-on: ubuntu-latest
+    environment: production
     permissions:
-      contents: write # to be able to publish a GitHub release
-      issues: write # to be able to comment on released issues
-      pull-requests: write # to be able to comment on released pull requests
+      contents: write # to push git tags, update CHANGELOG.md and create GitHub Releases
+      issues: write # to post comments on issues resolved in the new release
+      pull-requests: write # to post comments on pull requests included in the new release
+      id-token: write # to authenticate with Sigstore for OIDC build provenance
+      attestations: write # to create and store the build provenance attestations for the .vsix
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           cache: "npm"
           node-version-file: "package.json"
+
       - name: Install dependencies
         run: npm clean-install --prefer-offline --no-audit --no-fund
+
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
         run: npm audit signatures
+
+      - name: Verify Marketplace Token
+        run: npx vsce verify-pat $(jq --raw-output .publisher package.json)
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
       - name: Release
+        id: semantic
+        run: |
+          npx \
+          --package semantic-release@25 \
+          --package conventional-changelog-conventionalcommits \
+          --package @semantic-release/changelog \
+          --package semantic-release-vsce \
+          --package @semantic-release/git \
+          --package @semantic-release/github \
+          semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release --dry-run
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+      - name: Generate build attestation
+        # Prevents error if semantic-release skips versioning (e.g. only chore commits)
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: "*.vsix"
