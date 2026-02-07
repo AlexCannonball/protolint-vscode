@@ -205,21 +205,24 @@ async function promisifyEvent<T>(
   event: Event<T>,
   assertion?: TFiredEventAssertion<typeof event>,
 ): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
-    const disposable = event((value) => {
-      try {
-        assertion?.(value);
-      } catch (error) {
-        reject(error instanceof Error ? error : new Error('Unknown error'));
+  // https://github.com/typescript-eslint/typescript-eslint/issues/8113
+  // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+  const { promise, reject, resolve } = Promise.withResolvers<void>();
+  const disposable = event((value) => {
+    try {
+      assertion?.(value);
+    } catch (error) {
+      reject(error instanceof Error ? error : new Error('Unknown error'));
 
-        return;
-      } finally {
-        disposable.dispose();
-      }
+      return;
+    } finally {
+      disposable.dispose();
+    }
 
-      resolve();
-    });
+    resolve();
   });
+
+  return promise;
 }
 
 async function removeWorkspaceFolder(folderUri: Uri): Promise<void> {
@@ -469,17 +472,18 @@ async function getTargetDiagnostics(
   uri: Uri,
   targetCodes: readonly string[],
 ): Promise<string[]> {
-  return new Promise<string[]>((resolve) => {
-    const disposable = languages.onDidChangeDiagnostics(({ uris }) => {
-      if (
-        uris.map((item) => item.toString()).includes(uri.toString()) &&
-        JSON.stringify(getDiagnosticCodes(uri)) === JSON.stringify(targetCodes)
-      ) {
-        disposable.dispose();
-        resolve(getDiagnosticCodes(uri));
-      }
-    });
+  const { promise, resolve } = Promise.withResolvers<string[]>();
+  const disposable = languages.onDidChangeDiagnostics(({ uris }) => {
+    if (
+      uris.map((item) => item.toString()).includes(uri.toString()) &&
+      JSON.stringify(getDiagnosticCodes(uri)) === JSON.stringify(targetCodes)
+    ) {
+      disposable.dispose();
+      resolve(getDiagnosticCodes(uri));
+    }
   });
+
+  return promise;
 }
 
 async function setDocumentText(
