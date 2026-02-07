@@ -60,7 +60,7 @@ jobs:
       - name: Release
         id: semantic
         run: |
-          npx \
+          npx --yes \
           --package semantic-release@25 \
           --package conventional-changelog-conventionalcommits \
           --package @semantic-release/changelog \
