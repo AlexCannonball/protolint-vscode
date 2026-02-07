@@ -206,11 +206,11 @@ class DocumentMirror implements IChangeFolders, VsDisposable {
   async closeDocument(closedDocument: TextDocument): Promise<void> {
     for (const [document, file] of this.#documents) {
       if (closedDocument === document && file.outermostFolder === undefined) {
-        this.#documents.delete(document);
-
         await file.directory[Symbol.asyncDispose]();
       }
     }
+
+    this.#documents.delete(closedDocument);
   }
 
   dispose(): void {
