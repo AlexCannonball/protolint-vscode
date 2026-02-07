@@ -269,6 +269,11 @@ describe('diagnostics:', function () {
     });
 
     it(`should follow the document language`, async function () {
+      await window.showTextDocument(untitledDocument, {
+        preserveFocus: false,
+        preview: false,
+      });
+
       const closedDocument = untitledDocument;
 
       untitledDocument = await languages.setTextDocumentLanguage(
