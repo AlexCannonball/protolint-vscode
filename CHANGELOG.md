@@ -1,3 +1,9 @@
+## [1.1.2](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.1...v1.1.2) (2026-02-07)
+
+### 🐛 Bug Fixes
+
+* memory leak when closing documents ([83977f0](https://github.com/AlexCannonball/protolint-vscode/commit/83977f0ae93c95a18fbd03a321ec5c8f22c9f600))
+
 ## [1.1.1](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.0...v1.1.1) (2026-02-01)
 
 ### 🐛 Bug Fixes
