@@ -129,7 +129,7 @@
     "eslint-plugin-perfectionist": "^5.5.0",
     "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-sonarjs": "^3.0.7",
-    "eslint-plugin-unicorn": "^62.0.0",
+    "eslint-plugin-unicorn": "^63.0.0",
     "mocha": "11.6.x",
     "prettier": "3.8.1",
     "protolint": "^0.56.4",
