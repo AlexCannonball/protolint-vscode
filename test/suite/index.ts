@@ -1,6 +1,7 @@
 import { once } from 'node:events';
 import { glob } from 'node:fs/promises';
 import path from 'node:path';
+import process from 'node:process';
 
 import Mocha from 'mocha';
 

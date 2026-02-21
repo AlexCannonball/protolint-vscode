@@ -21,8 +21,26 @@ export const nConfig = {
      */
     'n/no-unpublished-require': 'off',
 
+    /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/buffer.md */
+    'n/prefer-global/buffer': ['error', 'never'],
+
+    /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/console.md */
+    'n/prefer-global/console': ['error', 'always'],
+
     /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/process.md */
-    'n/prefer-global/process': 'error',
+    'n/prefer-global/process': ['error', 'never'],
+
+    /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/text-decoder.md */
+    'n/prefer-global/text-decoder': ['error', 'always'],
+
+    /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/text-encoder.md */
+    'n/prefer-global/text-encoder': ['error', 'always'],
+
+    /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/url.md */
+    'n/prefer-global/url': ['error', 'always'],
+
+    /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-global/url-search-params.md */
+    'n/prefer-global/url-search-params': ['error', 'always'],
 
     /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/prefer-promises/fs.md */
     'n/prefer-promises/fs': 'error',

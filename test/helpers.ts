@@ -1,5 +1,6 @@
 import { url as inspectorUrl } from 'node:inspector';
 import path from 'node:path';
+import process from 'node:process';
 import { fileURLToPath } from 'node:url';
 
 import { expect } from 'chai';
