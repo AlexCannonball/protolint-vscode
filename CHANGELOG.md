@@ -1,3 +1,9 @@
+## [1.1.3](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.2...v1.1.3) (2026-04-29)
+
+### 🐛 Bug Fixes
+
+* enable remote and devcontainer execution ([5022f10](https://github.com/AlexCannonball/protolint-vscode/commit/5022f10a0eb6966b0e7cc29317c0cd19e58cf1cd))
+
 ## [1.1.2](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.1...v1.1.2) (2026-02-07)
 
 ### 🐛 Bug Fixes
