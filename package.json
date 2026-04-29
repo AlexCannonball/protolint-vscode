@@ -84,7 +84,6 @@
     "onLanguage:proto3"
   ],
   "extensionKind": [
-    "ui",
     "workspace"
   ],
   "icon": "icon.png",
