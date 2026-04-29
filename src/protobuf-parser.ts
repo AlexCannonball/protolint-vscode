@@ -97,7 +97,7 @@ type TTokenMap = Map<TokenKind, ITokenRange[]>;
  */
 class TokenMap {
   public get tokens(): ReadonlyMap<TokenKind, ITokenRange[]> {
-    return this.#tokens as ReadonlyMap<TokenKind, ITokenRange[]>;
+    return this.#tokens;
   }
 
   /**
