@@ -12,9 +12,12 @@
 # Don't ignore JSON files
 !**/*.json
 
-# Ignore npm files
-**/package-lock.json
+# Ignore package.json
 **/package.json
+
+# Ignore lock files
+**/devcontainer-lock.json
+**/package-lock.json
 
 # Don't ignore markdown files
 !**/*.md
