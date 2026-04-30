@@ -1,0 +1,28 @@
+{
+  "name": "protolint VS Code Extension Dev",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/node:2.0.0": {
+      "version": "22.17.0"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "EditorConfig.EditorConfig",
+        "esbenp.prettier-vscode",
+        "ms-vscode.extension-test-runner",
+        "redhat.vscode-yaml",
+        "YoavBls.pretty-ts-errors",
+        "zxh404.vscode-proto3"
+      ],
+      "settings": {
+        "prettier.requireConfig": true
+      }
+    }
+  },
+  "postCreateCommand": "npm clean-install"
+}

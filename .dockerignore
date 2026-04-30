@@ -1,0 +1,31 @@
+# Ignore the directory with vscode testing instance
+.vscode-test/
+
+# Ignore workspace folder settings files in test fixtures
+fixtures/**/settings.json
+
+# Ignore node_modules
+**/node_modules
+
+# Ignore compiled files directory
+dist/
+
+# Ignore compiled test directory
+test-compiled/
+
+# Ignore packaged VS Code extensions
+*.vsix
+
+# --- Docker specific ignores ---
+
+# Ignore the git metadata directory
+.git/
+
+# Ignore the devcontainer configuration directory
+.devcontainer/
+
+# Ignore the local vscode settings directory
+.vscode/
+
+# Ignore all log files
+*.log

@@ -105,6 +105,7 @@
     "lint": "npx eslint . --concurrency=auto",
     "pretest": "tsc -b ./test",
     "test": "node ./test-compiled/run-test.js",
+    "test:headless": "xvfb-run -a npm test",
     "vscode:prepublish": "npm run compile && npm run lint"
   },
   "devDependencies": {

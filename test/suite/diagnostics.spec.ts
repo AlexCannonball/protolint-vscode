@@ -451,6 +451,11 @@ describe('diagnostics:', function () {
     });
 
     it(`should follow document text changes`, async function () {
+      await window.showTextDocument(rootDocument, {
+        preserveFocus: false,
+        preview: false,
+      });
+
       const targetCodes = [
         'ENUM_NAMES_UPPER_CAMEL_CASE',
         'MESSAGE_NAMES_UPPER_CAMEL_CASE',

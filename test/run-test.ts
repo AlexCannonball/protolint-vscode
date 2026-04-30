@@ -26,6 +26,9 @@ async function main() {
           import.meta.dirname,
           '../fixtures/multi_folder.code-workspace',
         ),
+        '--headless',
+        '--disable-gpu',
+        '--disable-crash-reporter',
       ],
     };
 
