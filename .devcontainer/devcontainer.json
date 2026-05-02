@@ -1,19 +1,25 @@
 {
   "name": "protolint VS Code Extension Dev",
   "build": {
-    "dockerfile": "Dockerfile"
+    "dockerfile": "Dockerfile",
+    "context": ".."
   },
   "features": {
     "ghcr.io/devcontainers/features/node:2.0.0": {
       "version": "22.17.0"
     }
   },
+  "mounts": [
+    "source=${localWorkspaceFolderBasename}-node_modules,target=${containerWorkspaceFolder}/node_modules,type=volume",
+    "source=vscode-npm-cache,target=/home/vscode/.npm,type=volume"
+  ],
   "customizations": {
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
         "EditorConfig.EditorConfig",
         "esbenp.prettier-vscode",
+        "ms-azuretools.vscode-docker",
         "ms-vscode.extension-test-runner",
         "redhat.vscode-yaml",
         "YoavBls.pretty-ts-errors",
@@ -24,5 +30,6 @@
       }
     }
   },
-  "postCreateCommand": "npm clean-install"
+  "postCreateCommand": "sudo chown -R vscode:vscode /workspaces/${localWorkspaceFolderBasename} /home/vscode/.npm && npm install --global npm@latest && npm clean-install --prefer-offline --omit=optional --no-audit --no-fund",
+  "waitFor": "postCreateCommand"
 }
