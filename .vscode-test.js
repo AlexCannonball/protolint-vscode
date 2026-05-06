@@ -1,5 +1,3 @@
-import process from 'node:process';
-
 import { defineConfig } from '@vscode/test-cli';
 
 export default defineConfig({
@@ -7,7 +5,7 @@ export default defineConfig({
   installExtensions: ['zxh404.vscode-proto3'],
   label: 'All tests',
   mocha: {
-    timeout: process.env.DEBUG_TIMEOUT,
+    timeout: 4000,
     ui: 'bdd',
   },
   version: 'stable',

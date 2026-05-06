@@ -1,13 +1,9 @@
-import { createRequire } from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
 
-import type { TestOptions } from '@vscode/test-electron';
+import { runTests, runVSCodeCommand } from '@vscode/test-electron';
 
-const { runTests, runVSCodeCommand } = createRequire(import.meta.url)(
-  '@vscode/test-electron',
-  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-) as typeof import('@vscode/test-electron');
+import type { TestOptions } from '@vscode/test-electron';
 
 async function main() {
   try {

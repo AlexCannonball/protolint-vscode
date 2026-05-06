@@ -53,4 +53,23 @@ export const nConfig = {
       allowModules: ['vscode'],
     },
   },
+  /** Disable some checks for test files.
+   *
+   * Remove after moving to Node.js 24.
+   */
+  testExceptions: {
+    rules: {
+      /** https://github.com/eslint-community/eslint-plugin-n/blob/master/docs/rules/no-unsupported-features/node-builtins.md */
+      'n/no-unsupported-features/node-builtins': [
+        'error',
+        {
+          ignores: [
+            'import.meta.dirname',
+            'import.meta.filename',
+            'fs/promises.glob',
+          ],
+        },
+      ],
+    },
+  },
 };
