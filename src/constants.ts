@@ -84,8 +84,7 @@ const RUNTIME_ERROR_CODE = 'RUNTIME_ERR';
  * A wrapper for an operation result.
  */
 type TResult<T, E> =
-  | { error: E; result: 'error' }
-  | { result: 'success'; value: T };
+  { error: E; result: 'error' } | { result: 'success'; value: T };
 
 /**
  * The command identifier for fixing `protolint` executable.
