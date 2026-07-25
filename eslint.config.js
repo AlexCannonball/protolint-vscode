@@ -82,7 +82,6 @@ export default defineConfig(
         ecmaVersion: 'latest',
         projectService: true,
         sourceType: 'module',
-        // eslint-disable-next-line n/no-unsupported-features/node-builtins
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -130,10 +129,6 @@ export default defineConfig(
       {
         files: ['helpers.ts'],
         ...tseslintConfig.testExceptions,
-      },
-      {
-        files: ['**/*.ts'],
-        ...nConfig.testExceptions,
       },
     ],
   },
