@@ -1,3 +1,5 @@
+## [1.1.4](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.3...v1.1.4) (2026-07-25)
+
 ## [1.1.3](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.2...v1.1.3) (2026-04-29)
 
 ### 🐛 Bug Fixes
