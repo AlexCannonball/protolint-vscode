@@ -1,6 +1,7 @@
 import { url as inspectorUrl } from 'node:inspector';
 import path from 'node:path';
 import process from 'node:process';
+import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
 import { expect } from 'chai';
@@ -120,6 +121,10 @@ async function appendWorkspaceFolders(
     'Workspace folders update operation must be successful',
   ).to.be.true;
   await workspaceFoldersChange;
+
+  // Wait for one event loop tick to ensure that `DocumentMirror`
+  // has finished processing its internal async map updates.
+  await setTimeout(10);
 }
 
 function getExecutablePath(): string {
@@ -252,6 +257,10 @@ async function removeWorkspaceFolder(folderUri: Uri): Promise<void> {
     `Closing the folder '${folderUri.fsPath}' operation must be successful`,
   ).to.be.true;
   await workspaceFoldersChange;
+
+  // Wait for one event loop tick to ensure that `DocumentMirror`
+  // has finished processing its internal async map updates.
+  await setTimeout(10);
 }
 
 async function resetCommandConfig(): Promise<void> {
@@ -355,6 +364,10 @@ async function resetWorkspaceFolders(): Promise<void> {
   ).to.be.true;
 
   await workspaceFoldersChange;
+
+  // Wait for one event loop tick to ensure that `DocumentMirror`
+  // has finished processing its internal async map updates.
+  await setTimeout(10);
 }
 
 const statusChangeAvailableAssertion: TFiredEventAssertion<
