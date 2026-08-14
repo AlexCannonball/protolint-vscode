@@ -128,11 +128,9 @@ async function appendWorkspaceFolders(
 }
 
 function getExecutablePath(): string {
-  const moduleRoot = path.dirname(
-    fileURLToPath(import.meta.resolve('protolint')),
-  );
+  const packageJsonUrl = import.meta.resolve('protolint/package.json');
 
-  return path.resolve(moduleRoot, `./bin/protolint`);
+  return path.resolve(fileURLToPath(packageJsonUrl), `../bin/protolint`);
 }
 
 function getFolderExecutable(
