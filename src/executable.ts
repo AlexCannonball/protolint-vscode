@@ -54,10 +54,7 @@ enum ProtolintExitCode {
 }
 
 function isProtolintExitCode(value: unknown): value is ProtolintExitCode {
-  return (
-    typeof value === 'number' &&
-    Object.values(ProtolintExitCode).includes(value)
-  );
+  return typeof value === 'number' && value in ProtolintExitCode;
 }
 
 function isSpawnError(value: unknown): value is { code: string } & Error {
