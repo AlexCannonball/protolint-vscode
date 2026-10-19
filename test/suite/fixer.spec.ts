@@ -4,7 +4,8 @@ import { commands, Uri, window, workspace } from 'vscode';
 import {
   EDITOR_COMMAND_AUTOFIX,
   SUPPORTED_LANGUAGE_ID,
-} from '../../dist/constants.js';
+} from '#ext/constants.js';
+
 import {
   appendWorkspaceFolders,
   closeDocuments,

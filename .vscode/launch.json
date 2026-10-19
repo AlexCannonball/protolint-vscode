@@ -12,7 +12,7 @@
       "runtimeExecutable": "${execPath}",
       "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
-      "preLaunchTask": "npm: watch"
+      "preLaunchTask": "watch"
     },
     {
       "name": "Extension Tests",
@@ -28,7 +28,7 @@
         "${workspaceFolder}/dist/**/*.js",
         "${workspaceFolder}/test-compiled/**/*.js"
       ],
-      "preLaunchTask": "npm: watch"
+      "preLaunchTask": "watch"
     }
   ]
 }

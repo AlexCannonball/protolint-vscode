@@ -5,7 +5,8 @@ import path from 'node:path';
 import { expect } from 'chai';
 import { Uri, workspace, WorkspaceEdit } from 'vscode';
 
-import { SUPPORTED_LANGUAGE_ID } from '../../dist/constants.js';
+import { SUPPORTED_LANGUAGE_ID } from '#ext/constants.js';
+
 import {
   appendWorkspaceFolders,
   closeDocuments,

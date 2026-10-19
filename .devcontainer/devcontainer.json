@@ -17,6 +17,7 @@
   "customizations": {
     "vscode": {
       "extensions": [
+        "connor4312.esbuild-problem-matchers",
         "dbaeumer.vscode-eslint",
         "EditorConfig.EditorConfig",
         "esbenp.prettier-vscode",

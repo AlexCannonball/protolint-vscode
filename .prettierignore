@@ -27,6 +27,9 @@
 !**/*.cts
 !**/*.mts
 
+# Ignore TS declaration cache directory
+.cache/
+
 # Ignore .vscode-test
 .vscode-test/
 

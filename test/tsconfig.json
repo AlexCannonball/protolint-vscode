@@ -1,9 +1,12 @@
 {
   "extends": "../tsconfig-base.json",
   "compilerOptions": {
-    "outDir": "../test-compiled",
-    "rootDir": "."
+    "outDir": "../.cache/test"
   },
-  "references": [{ "path": "../src" }],
+  "references": [
+    {
+      "path": "../src"
+    }
+  ],
   "include": ["**/*"]
 }

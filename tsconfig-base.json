@@ -5,17 +5,19 @@
     "composite": true,
     /* Modules */
     "resolveJsonModule": true,
+    "paths": {
+      "#ext/*": ["./src/*"]
+    },
     /* Emit */
     "declaration": true,
     "declarationMap": true,
+    "emitDeclarationOnly": true,
     "sourceMap": true,
     "removeComments": true,
     /* Type Checking */
     "types": ["node"],
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "noUncheckedIndexedAccess": true,
-    /* Completeness */
-    "skipLibCheck": true
+    "noUncheckedIndexedAccess": true
   }
 }

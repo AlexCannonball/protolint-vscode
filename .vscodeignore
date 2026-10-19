@@ -11,4 +11,4 @@
 !icon.png
 
 # Don't ignore the extension code
-!dist/**/*.js
+!dist/extension.js

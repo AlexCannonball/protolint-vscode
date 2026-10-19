@@ -8,12 +8,10 @@ import {
   workspace,
 } from 'vscode';
 
-import { CONFIG_COMMAND_KEY } from '../../dist/config.js';
-import { CONFIG_SECTION } from '../../dist/constants.js';
-import {
-  STATUS_DETAIL_UNAVAILABLE,
-  STATUS_TEXT,
-} from '../../dist/status-item.js';
+import { CONFIG_COMMAND_KEY } from '#ext/config.js';
+import { CONFIG_SECTION } from '#ext/constants.js';
+import { STATUS_DETAIL_UNAVAILABLE, STATUS_TEXT } from '#ext/status-item.js';
+
 import {
   appendWorkspaceFolders,
   closeDocuments,
@@ -27,7 +25,7 @@ import {
   resetWorkspaceFolders,
 } from '../helpers.js';
 
-import type { ITesting } from '../../dist/extension.js';
+import type { ITesting } from '#ext/extension.js';
 
 type TTestableStatus = Pick<
   ITesting['languageStatus'],

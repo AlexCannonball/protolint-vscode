@@ -1,15 +1,13 @@
 import { expect } from 'chai';
 import { Range, workspace } from 'vscode';
 
-import {
-  ExcludeLineRangesErrorCode,
-  testing,
-} from '../../dist/protobuf-parser.js';
+import { ExcludeLineRangesErrorCode, testing } from '#ext/protobuf-parser.js';
+
 import { closeDocuments, RULES_FIXTURE } from '../helpers.js';
 
 import type { TextDocument } from 'vscode';
 
-import type { ITokenRange } from '../../dist/protobuf-parser.js';
+import type { ITokenRange } from '#ext/protobuf-parser.js';
 
 function prepareRanges(
   document: TextDocument,
