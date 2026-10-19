@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig-base.json",
+  "compilerOptions": {
+    "erasableSyntaxOnly": true,
+    "noEmit": true,
+    "outDir": "./.cache/infra"
+  },
+  "files": [],
+  "include": ["esbuild.ts", "package.json"]
+}

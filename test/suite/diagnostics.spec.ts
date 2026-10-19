@@ -1,10 +1,8 @@
 import { expect } from 'chai';
 import { languages, Uri, window, workspace, WorkspaceEdit } from 'vscode';
 
-import {
-  CONFIG_BASENAME,
-  SUPPORTED_LANGUAGE_ID,
-} from '../../dist/constants.js';
+import { CONFIG_BASENAME, SUPPORTED_LANGUAGE_ID } from '#ext/constants.js';
+
 import {
   appendWorkspaceFolders,
   closeDocuments,

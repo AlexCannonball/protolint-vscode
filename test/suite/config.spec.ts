@@ -3,12 +3,10 @@ import path from 'node:path';
 import { expect } from 'chai';
 import { ConfigurationTarget, Uri, workspace } from 'vscode';
 
-import {
-  CONFIG_COMMAND_KEY,
-  CONFIG_COMMAND_SECTION,
-} from '../../dist/config.js';
-import { CONFIG_SECTION } from '../../dist/constants.js';
-import { ExecuteErrorCode } from '../../dist/executable.js';
+import { CONFIG_COMMAND_KEY, CONFIG_COMMAND_SECTION } from '#ext/config.js';
+import { CONFIG_SECTION } from '#ext/constants.js';
+import { ExecuteErrorCode } from '#ext/executable.js';
+
 import {
   appendWorkspaceFolders,
   closeDocuments,
@@ -33,7 +31,7 @@ import {
 
 import type { TextDocument, WorkspaceFolder } from 'vscode';
 
-import type { ITesting } from '../../dist/extension.js';
+import type { ITesting } from '#ext/extension.js';
 
 const OUTER_FOLDER_FIXTURE = Uri.joinPath(FIXTURES_DIRECTORY, 'config_outer');
 const INNER_FOLDER_FIXTURE = Uri.joinPath(OUTER_FOLDER_FIXTURE, 'config_inner');

@@ -7,6 +7,9 @@ fixtures/**/settings.json
 # Ignore node_modules
 **/node_modules
 
+# Ignore TS declaration cache directory
+.cache/
+
 # Ignore compiled files directory
 dist/
 

@@ -1,9 +1,17 @@
 // Place your settings in this file to overwrite default and user settings.
 {
   "search.exclude": {
+    ".cache": true,
+    ".vscode-test/**": true,
     "dist/**": true, // set this to false to include "dist" folder in search results
-    "test-compiled/**": true,
-    ".vscode-test/**": true
+    "test-compiled/**": true
   },
-  "prettier.requireConfig": true
+  "prettier.requireConfig": true,
+  "editor.formatOnSave": true,
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

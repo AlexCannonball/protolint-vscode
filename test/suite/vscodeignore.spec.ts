@@ -62,6 +62,9 @@ describe(`'.vscodeignore' and package files`, function () {
     const undesiredExtensions = [
       '.code-workspace',
       '.json',
+      '.cjs',
+      '.js',
+      '.mjs',
       '.cts',
       '.mts',
       '.ts',
@@ -80,7 +83,7 @@ describe(`'.vscodeignore' and package files`, function () {
 
     expect(
       fileExtensions,
-      `The extension package must not include files with undesired extensions'`,
+      `The extension package must not include files with undesired extensions`,
     ).to.not.have.any.keys(undesiredExtensions);
   });
 });

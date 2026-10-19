@@ -3,13 +3,8 @@
 import { expect } from 'chai';
 import { Range, workspace } from 'vscode';
 
-// https://github.com/microsoft/vscode-test/issues/265#issuecomment-2073615877
-// Probably, paths to the app code unfortunately should have `dist` path.
-import {
-  codeActions,
-  ProtolintDiagnostic,
-  testing,
-} from '../../dist/rule-mapper.js';
+import { codeActions, ProtolintDiagnostic, testing } from '#ext/rule-mapper.js';
+
 import {
   closeDocuments,
   codeActionAssertion,
@@ -31,7 +26,8 @@ import {
 
 import type { TextDocument } from 'vscode';
 
-import type { IJsonLintsItem } from '../../dist/json-report-parser.js';
+import type { IJsonLintsItem } from '#ext/json-report-parser.js';
+
 import type { IRuleTest } from '../helpers.js';
 
 const { FIX_KEY, RANGE_KEY } = testing;

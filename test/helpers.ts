@@ -17,17 +17,17 @@ import {
   WorkspaceEdit,
 } from 'vscode';
 
-import { CONFIG_COMMAND_KEY } from '../dist/config.js';
+import { CONFIG_COMMAND_KEY } from '#ext/config.js';
 import {
   COMMAND_LINT_DOCUMENTS,
   CONFIG_SECTION,
   DIAGNOSTIC_SOURCE,
   EDITOR_COMMAND_FIX_INDENTS,
   EXTENSION_ID,
-} from '../dist/constants.js';
-import { DocumentMirror } from '../dist/document-mirror.js';
-import { executeCommand } from '../dist/helpers.js';
-import { ProtolintDiagnostic, testing } from '../dist/rule-mapper.js';
+} from '#ext/constants.js';
+import { DocumentMirror } from '#ext/document-mirror.js';
+import { executeCommand } from '#ext/helpers.js';
+import { ProtolintDiagnostic, testing } from '#ext/rule-mapper.js';
 
 import type { MochaOptions } from 'mocha';
 import type {
@@ -38,12 +38,12 @@ import type {
   WorkspaceFolder,
 } from 'vscode';
 
-import type { ExecutableCache } from '../dist/config.js';
-import type { IReflection } from '../dist/document-mirror.js';
-import type { Executable } from '../dist/executable.js';
-import type { ITesting } from '../dist/extension.js';
-import type { TExtractListener } from '../dist/helpers.js';
-import type { TParsedMessage } from '../dist/rule-mapper.js';
+import type { ExecutableCache } from '#ext/config.js';
+import type { IReflection } from '#ext/document-mirror.js';
+import type { Executable } from '#ext/executable.js';
+import type { ITesting } from '#ext/extension.js';
+import type { TExtractListener } from '#ext/helpers.js';
+import type { TParsedMessage } from '#ext/rule-mapper.js';
 
 type TMochaTimeout = Required<MochaOptions>['timeout'];
 

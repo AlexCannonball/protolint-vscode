@@ -24,10 +24,11 @@ import { unicornConfig } from './config/lint/unicorn.js';
 export default defineConfig(
   /** Completely ignored files */
   globalIgnores([
-    './dist/**',
-    './test-compiled/**',
-    './**/node_modules/',
-    './.vscode-test/**',
+    '.cache/**',
+    '.vscode-test/**',
+    'dist/**',
+    '**/node_modules/',
+    'test-compiled/**',
   ]),
 
   {

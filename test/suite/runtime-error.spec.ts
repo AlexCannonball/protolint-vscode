@@ -1,7 +1,8 @@
 import { expect } from 'chai';
 import { Uri, window, workspace } from 'vscode';
 
-import { RUNTIME_ERROR_CODE } from '../../dist/constants.js';
+import { RUNTIME_ERROR_CODE } from '#ext/constants.js';
+
 import {
   appendWorkspaceFolders,
   closeDocuments,

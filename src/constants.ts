@@ -1,16 +1,24 @@
-import package_ from '../package.json' with { type: 'json' };
-
 import type { DocumentSelector, TextDocument } from 'vscode';
 
 import type { Diagnostics } from './diagnostics.js';
 import type { Executable } from './executable.js';
 
-const { contributes, name, publisher } = package_;
+/* eslint-disable @typescript-eslint/naming-convention */
+declare global {
+  const __EXT_NAME__: string;
+  const __EXT_PUBLISHER__: string;
+  const __CMD_LINT__: string;
+  const __CMD_AUTOFIX__: string;
+}
+/* eslint-enable @typescript-eslint/naming-convention */
+
+const EXTENSION_NAME = __EXT_NAME__;
+const EXTENSION_PUBLISHER = __EXT_PUBLISHER__;
 
 /**
  * This VS Code Extension full identifier in the form of `publisher.name`.
  */
-const EXTENSION_ID = `${publisher}.${name}`;
+const EXTENSION_ID = `${EXTENSION_PUBLISHER}.${EXTENSION_NAME}`;
 
 const SUPPORTED_LANGUAGE_ID = 'proto3';
 const SUPPORTED_LANGUAGE_IDS = [SUPPORTED_LANGUAGE_ID];
@@ -29,14 +37,8 @@ const CONFIG_SECTION = 'protolint';
  * The command identifier for reindenting a document text.
  */
 const EDITOR_COMMAND_FIX_INDENTS = 'protolint.editorFixIndents';
-const {
-  commands: [
-    { command: EDITOR_COMMAND_LINT } = { command: 'protolint.editorLint' },
-    { command: EDITOR_COMMAND_AUTOFIX } = {
-      command: 'protolint.editorAutofix',
-    },
-  ],
-} = contributes;
+const EDITOR_COMMAND_LINT = __CMD_LINT__;
+const EDITOR_COMMAND_AUTOFIX = __CMD_AUTOFIX__;
 
 const PROTOLINT_REPO_URI =
   'https://github.com/yoheimuta/protolint#installation';
