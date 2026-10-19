@@ -237,12 +237,11 @@ describe('rule-mapper:', function () {
       rulePostfix: '',
     },
     {
-      /**
-       * See https://github.com/yoheimuta/protolint/issues/349
-       */
-      actionIndexes: [0],
-      expectedCodeActions: fixAllIndentsAction,
-      expectedParsedMessage: {},
+      actionIndexes: [0, 1],
+      expectedCodeActions: fixIndentActions,
+      expectedParsedMessage: {
+        [FIX_KEY]: '',
+      },
       expectedRange: new Range(4, 0, 4, 1),
       rule: 'INDENT',
       rulePostfix: `(with 'possible incorrect indentation style')`,
@@ -250,19 +249,15 @@ describe('rule-mapper:', function () {
     {
       actionIndexes: [0],
       expectedCodeActions: fixAllIndentsAction,
-      expectedParsedMessage: {
-        [FIX_KEY]: '',
-      },
+      expectedParsedMessage: {},
       expectedRange: new Range(4, 27, 4, 27),
       rule: 'INDENT',
       rulePostfix: `(with the expected error message and 0 whitespaces)`,
     },
     {
       actionIndexes: [0, 1],
-      expectedCodeActions: fixIndentActions,
-      expectedParsedMessage: {
-        [FIX_KEY]: '',
-      },
+      expectedCodeActions: fixAllIndentsAction,
+      expectedParsedMessage: {},
       expectedRange: new Range(15, 26, 15, 27),
       rule: 'INDENT',
       rulePostfix: `(with the expected error message and 1+ whitespaces)`,
