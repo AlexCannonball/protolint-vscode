@@ -12,3 +12,6 @@
 
 # Don't ignore the extension code
 !dist/extension.js
+
+# Don't ignore the migration guide
+!docs/stdin-migration.md
