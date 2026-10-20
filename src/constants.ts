@@ -124,6 +124,8 @@ const AUTO_DISABLE_MODES = ['next', 'none', 'this'] as const;
  */
 type TAutoDisableMode = (typeof AUTO_DISABLE_MODES)[number];
 
+const WARNING_STATE_KEY = 'hasShownStdinDeprecationWarning';
+
 export type { TAutoDisableMode, TExtensionCommands, TResult };
 export {
   AUTO_DISABLE_MODES,
@@ -145,4 +147,5 @@ export {
   SUPPORTED_LANGUAGE_ID,
   SUPPORTED_LANGUAGE_IDS,
   SUPPORTED_LANGUAGE_IDS_CONTEXT_KEY,
+  WARNING_STATE_KEY,
 };

@@ -8,6 +8,7 @@ import {
 import { Diagnostics } from './diagnostics.js';
 import { Executable } from './executable.js';
 import { Fixer } from './fixer.js';
+import { showDeprecationWarningIfNeeded } from './helpers.js';
 import { activateLogging } from './logger.js';
 import { LanguageStatusUpdater } from './status-item.js';
 
@@ -36,6 +37,8 @@ async function activate(
     SUPPORTED_LANGUAGE_IDS_CONTEXT_KEY,
     SUPPORTED_LANGUAGE_IDS,
   );
+
+  void showDeprecationWarningIfNeeded(context);
 
   if (context.extensionMode === ExtensionMode.Test) {
     return {
