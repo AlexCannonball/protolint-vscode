@@ -49,7 +49,8 @@ jobs:
       - name: Install dependencies
         run: npm clean-install --prefer-offline --no-audit --no-fund
 
-      - name: Verify the integrity of provenance attestations and registry signatures
+      - name:
+          Verify the integrity of provenance attestations and registry signatures
           for installed dependencies
         run: npm audit signatures
 
@@ -63,7 +64,7 @@ jobs:
         run: |
           npx --yes \
           --package semantic-release@25 \
-          --package conventional-changelog-conventionalcommits \
+          --package conventional-changelog-conventionalcommits@9 \
           --package @semantic-release/changelog \
           --package semantic-release-vsce \
           --package @semantic-release/git \
