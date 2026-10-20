@@ -1,9 +1,9 @@
 import { commands, Uri, window, workspace } from 'vscode';
 
-import { CONFIG_BASENAME } from './constants.js';
+import { CONFIG_BASENAME, WARNING_STATE_KEY } from './constants.js';
 import { logger } from './logger.js';
 
-import type { TextEditor, Event as TypedEvent } from 'vscode';
+import type { ExtensionContext, TextEditor, Event as TypedEvent } from 'vscode';
 
 import type { TExtensionCommands, TResult } from './constants.js';
 
@@ -147,6 +147,43 @@ function isNodeError(value: unknown): value is NodeJS.ErrnoException {
   return value instanceof Error;
 }
 
+async function showDeprecationWarningIfNeeded(
+  context: ExtensionContext,
+): Promise<void> {
+  const currentVersion = (context.extension.packageJSON as { version: string })
+    .version;
+
+  const lastShownVersion = context.globalState.get<string>(WARNING_STATE_KEY);
+
+  if (lastShownVersion === currentVersion) {
+    return;
+  }
+
+  const readButton = 'Read Migration Guide';
+  const message =
+    'Upcoming Breaking Change: protolint extension will soon drop support for protolint binary versions prior to v0.58.0.';
+
+  const selection = await window.showWarningMessage(message, readButton);
+
+  if (selection === readButton) {
+    const guideUri = Uri.joinPath(
+      context.extensionUri,
+      'docs',
+      'stdin-migration.md',
+    );
+
+    try {
+      await commands.executeCommand('markdown.showPreview', guideUri);
+    } catch {
+      const guide = await workspace.openTextDocument(guideUri);
+
+      await window.showTextDocument(guide);
+    }
+  }
+
+  await context.globalState.update(WARNING_STATE_KEY, currentVersion);
+}
+
 export type { TExtractListener, TWriteable };
 export {
   executeCommand,
@@ -155,4 +192,5 @@ export {
   isNodeError,
   locateExecutable,
   registerCommand,
+  showDeprecationWarningIfNeeded,
 };
