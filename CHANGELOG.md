@@ -1,3 +1,13 @@
+## [1.1.5](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.4...v1.1.5) (2026-10-20)
+
+### 🚀 Performance Improvements
+
+* bundle extension with esbuild for faster startup and smaller size ([c1729ab](https://github.com/AlexCannonball/protolint-vscode/commit/c1729abfe756af3fd35be0f8de7c6b74f2f4c9d0))
+
+### 📝 Documentation
+
+* add protolint deprecation guide ([fa17249](https://github.com/AlexCannonball/protolint-vscode/commit/fa1724929b3a25d2cd783fd2acfbf6bbf7fe6632))
+
 ## [1.1.4](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.3...v1.1.4) (2026-07-25)
 
 ## [1.1.3](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.2...v1.1.3) (2026-04-29)
