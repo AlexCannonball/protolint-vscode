@@ -2,6 +2,14 @@
 
 Integrates [`protolint`] into VS Code.
 
+> 📌 **Upcoming Breaking Change:** Starting from the next major release, this
+> extension **will drop support for all `protolint` CLI versions prior to
+> v0.58.0**.
+>
+> To learn about the benefits of this migration (no more temp files!) and how to
+> downgrade the extension if you are stuck on an older binary, please read our
+> [Migration & Downgrade Guide][stdin-migration].
+
 ## ⚠️ Warning
 
 `protolint` is designed to work only with files on disk. To implement the
@@ -122,6 +130,8 @@ discover and benefit from our tool. Thank you!
 Will be documented later.
 
 [`protolint`]: https://github.com/yoheimuta/protolint
+[stdin-migration]:
+    https://github.com/AlexCannonball/protolint-vscode/blob/main/docs/stdin-migration.md
 [`⚙️protolint.command`]: vscode://settings/protolint.command
 [multi-root workspace]:
     https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces
