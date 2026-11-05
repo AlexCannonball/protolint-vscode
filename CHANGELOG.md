@@ -1,3 +1,14 @@
+## [2.0.0](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.5...v2.0.0) (2026-11-05)
+
+### ⚠ BREAKING CHANGES
+
+* migrate linting infrastructure to native stdin streaming
+
+### ✨ Features
+
+* align configuration file discovery with native CLI behavior ([083c4f5](https://github.com/AlexCannonball/protolint-vscode/commit/083c4f5fb0fffd59162e58a52da3f061a10c4d67))
+* migrate linting infrastructure to native stdin streaming ([402a9b1](https://github.com/AlexCannonball/protolint-vscode/commit/402a9b1393a879a14af242cf1f7499296581f905))
+
 ## [1.1.5](https://github.com/AlexCannonball/protolint-vscode/compare/v1.1.4...v1.1.5) (2026-10-20)
 
 ### 🚀 Performance Improvements
