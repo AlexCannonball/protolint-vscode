@@ -1,7 +1,6 @@
 import { url as inspectorUrl } from 'node:inspector';
 import path from 'node:path';
 import process from 'node:process';
-import { setTimeout } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
 
 import { expect } from 'chai';
@@ -25,7 +24,6 @@ import {
   EDITOR_COMMAND_FIX_INDENTS,
   EXTENSION_ID,
 } from '#ext/constants.js';
-import { DocumentMirror } from '#ext/document-mirror.js';
 import { executeCommand } from '#ext/helpers.js';
 import { ProtolintDiagnostic, testing } from '#ext/rule-mapper.js';
 
@@ -39,7 +37,6 @@ import type {
 } from 'vscode';
 
 import type { ExecutableCache } from '#ext/config.js';
-import type { IReflection } from '#ext/document-mirror.js';
 import type { Executable } from '#ext/executable.js';
 import type { ITesting } from '#ext/extension.js';
 import type { TExtractListener } from '#ext/helpers.js';
@@ -121,10 +118,6 @@ async function appendWorkspaceFolders(
     'Workspace folders update operation must be successful',
   ).to.be.true;
   await workspaceFoldersChange;
-
-  // Wait for one event loop tick to ensure that `DocumentMirror`
-  // has finished processing its internal async map updates.
-  await setTimeout(10);
 }
 
 function getExecutablePath(): string {
@@ -216,7 +209,7 @@ async function promisifyEvent<T>(
     try {
       assertion?.(value);
     } catch (error) {
-      reject(error instanceof Error ? error : new Error('Unknown error'));
+      reject(Error.isError(error) ? error : new Error('Unknown error'));
 
       return;
     } finally {
@@ -255,10 +248,6 @@ async function removeWorkspaceFolder(folderUri: Uri): Promise<void> {
     `Closing the folder '${folderUri.fsPath}' operation must be successful`,
   ).to.be.true;
   await workspaceFoldersChange;
-
-  // Wait for one event loop tick to ensure that `DocumentMirror`
-  // has finished processing its internal async map updates.
-  await setTimeout(10);
 }
 
 async function resetCommandConfig(): Promise<void> {
@@ -362,10 +351,6 @@ async function resetWorkspaceFolders(): Promise<void> {
   ).to.be.true;
 
   await workspaceFoldersChange;
-
-  // Wait for one event loop tick to ensure that `DocumentMirror`
-  // has finished processing its internal async map updates.
-  await setTimeout(10);
 }
 
 const statusChangeAvailableAssertion: TFiredEventAssertion<
@@ -684,20 +669,6 @@ async function codeActionAssertion(
   }
 }
 
-async function getReflection({ uri }: TextDocument): Promise<IReflection> {
-  const mirror = await DocumentMirror.getInstance();
-  const methodName = mirror.reflect.name;
-  const reflection = await mirror.reflect(uri, false);
-
-  if (reflection.result === 'error') {
-    expect.fail(
-      `${methodName} returned error: ` + JSON.stringify(reflection.error),
-    );
-  }
-
-  return reflection.value;
-}
-
 export type { IRuleTest, TFiredEventAssertion };
 export {
   appendWorkspaceFolders,
@@ -717,7 +688,6 @@ export {
   getDiagnostics,
   getExecutablePath,
   getFolderExecutable,
-  getReflection,
   getSetCommandEvent,
   getTargetDiagnostics,
   getTestingApi,

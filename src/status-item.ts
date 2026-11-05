@@ -1,4 +1,4 @@
-import { languages, LanguageStatusSeverity, window } from 'vscode';
+import { env, languages, LanguageStatusSeverity, Uri, window } from 'vscode';
 
 import { ExecutableCache } from './config.js';
 import {
@@ -31,20 +31,38 @@ function accessMessage(_executable: Executable) {
  */
 async function unavailableMessage(executable: Executable) {
   const FIX_COMMAND_ACTIONS = 'Fix the problem';
+  const READ_GUIDE = 'Read Migration Guide';
+
+  const items = [FIX_COMMAND_ACTIONS];
+
+  if (executable.status.errorCode === ExecuteErrorCode.UnsupportedVersion) {
+    items.push(READ_GUIDE);
+  }
 
   const selection = await window.showErrorMessage(
-    `Protolint executable was not detected.
+    `Protolint executable problem.
     Fix it now or go back to fixing via the language status item later.`,
-    FIX_COMMAND_ACTIONS,
+    ...items,
   );
 
   if (selection === FIX_COMMAND_ACTIONS) {
     void executeCommand(COMMAND_FIX_EXECUTABLE_COMMAND, executable);
   }
+
+  if (selection === READ_GUIDE) {
+    env.openExternal(
+      Uri.parse(
+        'https://github.com/AlexCannonball/protolint-vscode/blob/main/docs/stdin-migration.md',
+        true,
+      ),
+    );
+  }
 }
 
 const STATUS_TEXT = 'protolint';
 const STATUS_DETAIL_UNAVAILABLE = 'executable unavailable';
+const STATUS_DETAIL_UNSUPPORTED =
+  'unsupported executable version, use at least 0.58.0';
 
 interface IStatus {
   detail: string;
@@ -68,6 +86,10 @@ const STATUS_MAP: Record<ExecuteErrorCode, IStatus> = {
   },
   [ExecuteErrorCode.Unknown]: {
     detail: 'unknown error',
+  },
+  [ExecuteErrorCode.UnsupportedVersion]: {
+    detail: STATUS_DETAIL_UNSUPPORTED,
+    fixer: unavailableMessage,
   },
 };
 
@@ -192,21 +214,32 @@ class LanguageStatusUpdater implements Disposable {
       return;
     }
 
-    this.#languageStatusItem.detail = STATUS_MAP[errorCode].detail;
+    const detail =
+      errorCode === ExecuteErrorCode.UnsupportedVersion
+        ? `${version} ${STATUS_MAP[errorCode].detail}`
+        : STATUS_MAP[errorCode].detail;
+
+    this.#languageStatusItem.detail = detail;
     this.#languageStatusItem.severity = LanguageStatusSeverity.Error;
 
     const arguments_: Parameters<
       TExtensionCommands[typeof COMMAND_FIX_EXECUTABLE_COMMAND]
     > = [this.#executable];
 
-    this.#languageStatusItem.command =
-      errorCode === ExecuteErrorCode.Unavailable
-        ? {
-            arguments: arguments_,
-            command: COMMAND_FIX_EXECUTABLE_COMMAND,
-            title: 'Fix the executable',
-          }
-        : undefined;
+    let command;
+
+    if (
+      errorCode === ExecuteErrorCode.Unavailable ||
+      errorCode === ExecuteErrorCode.UnsupportedVersion
+    ) {
+      command = {
+        arguments: arguments_,
+        command: COMMAND_FIX_EXECUTABLE_COMMAND,
+        title: 'Fix the executable',
+      };
+    }
+
+    this.#languageStatusItem.command = command;
 
     const { fixer } = STATUS_MAP[errorCode];
 

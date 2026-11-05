@@ -1,34 +1,35 @@
-# Dropping support for `protolint` versions prior to `v0.58.0`
+# Migration Guide: Support Dropped for `protolint` Versions Prior to `v0.58.0`
 
-Starting from the next major update, this VS Code extension will switch from its
-legacy file-mirroring mechanism to native `stdin` linting.
+With the latest major update, this VS Code extension has officially switched
+from its legacy file-mirroring mechanism to `stdin`.
 
-This change requires a modern version of the `protolint` binary (`v0.58.0` or
-newer).
+This extension now requires [`protolint` binary][installation] `v0.58.0` or
+newer.
 
-## Why are we doing this?
+## Why Was This Change Introduced?
 
-Until recently, `protolint` could only lint physical files on disk. To provide a
-smooth "lint-as-you-type" experience, the extension had to constantly copy your
-unsaved code into the system's temporary directory.
+Previously, `protolint` could only lint physical files saved on your disk. To
+deliver a seamless "lint-as-you-type" experience, the extension had to
+constantly write copies of your unsaved buffers into the system's temporary
+directory.
 
-With native `stdin` support finally merged into `protolint`, we can eliminate
-this workaround, bringing massive improvements:
+With native `stdin` support now standard in `protolint`, we have completely
+eliminated this workaround, introducing significant improvements:
 
-- **🛡️ Better Security & Privacy:** No sensitive code leftovers in the system
-  temp folders.
-- **📐 Native Configuration Discovery:** Eliminate previous limitations on
-  configuration files. The extension now fully delegates configuration discovery
-  to the native `protolint` CLI logic.
-- **⚡ CPU & I/O Efficiency:** Modern `protolint` core includes linting
-  optimizations. We also eliminated redundant disk read/write cycles.
-- **💾 No SSD Wear:** Eliminating thousands of micro-writes per coding session
-  reduces unnecessary disk wear.
+- **🛡️ Better Security & Privacy:** No more sensitive code footprints or
+  temporary buffer files left behind in your system's temp folders.
+- **📐 Native Configuration Discovery:** The extension completely delegates
+  configuration file resolution (`.protolint.yaml`, `protolint.yaml`, etc.) to
+  native `protolint` CLI logic.
+- **⚡ CPU & I/O Efficiency:** Modern `protolint` core optimizations coupled
+  with zero redundant disk read/write cycles keep your environment lightweight.
+- **💾 Reduced Hardware Wear:** Eliminating thousands of micro-writes per coding
+  session removes unnecessary wear on your SSD.
 
 ## How to Downgrade the Extension
 
-If you are working in a legacy or restricted environment where you cannot
-upgrade the `protolint` binary to `v0.58.0+`, you can easily roll back this
+If you are forced to work in a restricted or legacy environment where upgrading
+the `protolint` binary to `v0.58.0+` is impossible, you can roll back this
 extension to the last compatible version.
 
 ### Option 1: Via VS Code UI
@@ -45,18 +46,11 @@ extension to the last compatible version.
 code --install-extension astryna-tools.protolint-vscode@1.1.5
 ```
 
-### Option 3: Via VS Code Settings (Disable auto-update)
-
-To prevent VS Code from automatically upgrading the extension in the future:
-
-1. Open the **Extensions** view (`Ctrl+Shift+X` or `Cmd+Shift+X`) and find
-   [`protolint`][extension].
-2. Disable the `Auto Update` checkbox.
-
 ---
 
 _Thank you for using the extension! If you encounter any bugs during this
 transition, please feel free to [open an issue on GitHub][new_issue]._
 
+[installation]: https://github.com/yoheimuta/protolint#installation
 [extension]: vscode:extension/astryna-tools.protolint-vscode
 [new_issue]: https://github.com/AlexCannonball/protolint-vscode/issues/new

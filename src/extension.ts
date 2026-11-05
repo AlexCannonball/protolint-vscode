@@ -8,7 +8,7 @@ import {
 import { Diagnostics } from './diagnostics.js';
 import { Executable } from './executable.js';
 import { Fixer } from './fixer.js';
-import { showDeprecationWarningIfNeeded } from './helpers.js';
+import { clearDeprecationWarningState } from './helpers.js';
 import { activateLogging } from './logger.js';
 import { LanguageStatusUpdater } from './status-item.js';
 
@@ -38,7 +38,8 @@ async function activate(
     SUPPORTED_LANGUAGE_IDS,
   );
 
-  void showDeprecationWarningIfNeeded(context);
+  // Remove when the extension v2.0 is adopted
+  await clearDeprecationWarningState(context);
 
   if (context.extensionMode === ExtensionMode.Test) {
     return {

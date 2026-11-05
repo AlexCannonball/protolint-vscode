@@ -18,9 +18,8 @@ import {
   PROTOBUF_SELECTOR,
   RUNTIME_ERROR_CODE,
 } from './constants.js';
-import { DocumentMirror } from './document-mirror.js';
 import { ProtolintExitCode } from './executable.js';
-import { getConfigPath, registerCommand } from './helpers.js';
+import { registerCommand } from './helpers.js';
 import { parseJsonStderr } from './json-report-parser.js';
 import { logger } from './logger.js';
 import { Measure } from './performance.js';
@@ -137,7 +136,7 @@ class Diagnostics {
     );
 
     workspace.onDidCloseTextDocument(
-      async (document) => {
+      (document) => {
         if (!languages.match(PROTOBUF_SELECTOR, document)) {
           return;
         }
@@ -150,10 +149,6 @@ class Diagnostics {
         );
 
         this._diagnosticCollection.delete(uri);
-
-        const mirror = await DocumentMirror.getInstance();
-
-        await mirror.closeDocument(document);
       },
       undefined,
       disposables,
@@ -219,10 +214,6 @@ class Diagnostics {
 
     workspace.onDidChangeWorkspaceFolders(
       async ({ added, removed }) => {
-        const mirror = await DocumentMirror.getInstance();
-
-        await mirror.changeWorkspaceFolders({ added, removed });
-
         const affectedFolders = [...added, ...removed];
         const affectedDocuments = workspace.textDocuments
           .filter(({ uri }) => this._diagnosticCollection.has(uri))
@@ -282,9 +273,7 @@ class Diagnostics {
     let lint;
 
     try {
-      lint = await this.#executableCache
-        .getExecutable(uri)
-        .lint(uri, await getConfigPath(uri));
+      lint = await this.#executableCache.getExecutable(uri).lint(document);
     } catch (error) {
       logger.error(
         `[Diagnostics] Failed linting ${uri.toString()}. Details:`,
@@ -321,7 +310,7 @@ class Diagnostics {
           const message = `stderr wasn't provided with protolint exit code: ${exitCode.toString()}`;
 
           void window.showErrorMessage(message);
-          logger.error(`[Diagnostics] ` + message);
+          logger.error(`[Diagnostics] ${message}`);
 
           return;
         }
@@ -350,7 +339,7 @@ class Diagnostics {
           const message = `Failed to parse protolint stderr due to an error: ${parse.error.code}`;
 
           void window.showErrorMessage(message);
-          logger.error(`[Diagnostics] ` + message, parse.error);
+          logger.error(`[Diagnostics] ${message}`, parse.error);
 
           return;
         }
@@ -359,17 +348,6 @@ class Diagnostics {
         );
 
         Diagnostics._diagnosticCollection.set(uri, diagnostics);
-
-        return;
-      }
-
-      // undefined or unexpected exit code value.
-      default: {
-        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-        const message = `Protolint returned an unexpected exit code ${exitCode}. Can't refresh errors`;
-
-        void window.showErrorMessage(message);
-        logger.error(`[Diagnostics] ` + message);
 
         return;
       }
