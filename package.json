@@ -80,7 +80,7 @@
   },
   "activationEvents": [
     "workspaceContains:**/*.proto",
-    "workspaceContains:**/.protolint.yaml",
+    "workspaceContains:**/{.protolint,protolint}.{yaml,yml}",
     "onLanguage:proto3"
   ],
   "extensionKind": [

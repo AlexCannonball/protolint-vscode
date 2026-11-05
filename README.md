@@ -64,14 +64,14 @@ Use the editor command `protolint.editorAutofix` to autofix the active document.
 
 ### 📐 Support for `.protolint.yaml`
 
-The extension respects the `.protolint.yaml` configuration file but has some
-limitations:
+The extension fully delegates configuration discovery to the native `protolint`
+CLI logic but has some nuances due to the `stdin` execution context:
 
-- File name must exactly match `.protolint.yaml` (case-sensitive).
-- Only supported in single-folder and [multi-root workspace] modes, considering
-  only `.protolint.yaml` located in the root of a Workspace Folder. For
-  multi-root workspaces, only the closest Workspace Folder’s `.protolint.yaml`
-  is used.
+- In single-folder and [multi-root workspace] modes, only configuration files
+  located at the root of a Workspace Folder are considered. Any nested
+  configuration files (located in subdirectories deeper than the active
+  Workspace Folder root) are ignored. For multi-root workspaces, the closest
+  Workspace Folder root is used as the execution directory.
 - Untitled protobuf documents do not inherit these configurations.
 
 ### 📂 [Multi-Root Workspace][multi-root workspace] Support

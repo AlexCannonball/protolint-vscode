@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { languages, Uri, window, workspace, WorkspaceEdit } from 'vscode';
 
-import { CONFIG_BASENAME, SUPPORTED_LANGUAGE_ID } from '#ext/constants.js';
+import { SUPPORTED_LANGUAGE_ID } from '#ext/constants.js';
 
 import {
   appendWorkspaceFolders,
@@ -35,7 +35,7 @@ const documentTargetUri = Uri.joinPath(
   '..',
   `new_${DIAGNOSTICS_FIXTURE_BASENAME}`,
 );
-const rootConfigUri = Uri.joinPath(DIAGNOSTICS_DIRECTORY, CONFIG_BASENAME);
+const rootConfigUri = Uri.joinPath(DIAGNOSTICS_DIRECTORY, '.protolint.yaml');
 const rootConfigTargetUri = Uri.joinPath(rootConfigUri, '..', 'temp.yaml');
 
 const documentCodes = ['MESSAGE_NAMES_UPPER_CAMEL_CASE'];
