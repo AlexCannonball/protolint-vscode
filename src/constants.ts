@@ -61,9 +61,9 @@ const FAILOVER_PROTOLINT_COMMAND = 'protolint';
 const DIAGNOSTICS_COLLECTION_NAME = 'protolint';
 
 /**
- * `protolint` config file basename.
+ * `protolint` config files glob pattern.
  */
-const CONFIG_BASENAME = '.protolint.yaml';
+const CONFIG_GLOB = '**/{.protolint,protolint}.{yaml,yml}';
 
 /**
  * Document filter to select protocol buffer documents.
@@ -131,7 +131,7 @@ export {
   AUTO_DISABLE_MODES,
   COMMAND_FIX_EXECUTABLE_COMMAND,
   COMMAND_LINT_DOCUMENTS,
-  CONFIG_BASENAME,
+  CONFIG_GLOB,
   CONFIG_SECTION,
   DIAGNOSTIC_SOURCE,
   DIAGNOSTICS_COLLECTION_NAME,

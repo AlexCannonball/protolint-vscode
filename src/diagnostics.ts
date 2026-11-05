@@ -4,6 +4,7 @@ import {
   DiagnosticSeverity,
   languages,
   TextDocumentChangeReason,
+  Uri,
   window,
   workspace,
 } from 'vscode';
@@ -11,7 +12,7 @@ import {
 import { ExecutableCache } from './config.js';
 import {
   COMMAND_LINT_DOCUMENTS,
-  CONFIG_BASENAME,
+  CONFIG_GLOB,
   DIAGNOSTIC_SOURCE,
   DIAGNOSTICS_COLLECTION_NAME,
   EDITOR_COMMAND_LINT,
@@ -26,7 +27,7 @@ import { Measure } from './performance.js';
 import { ProtolintDiagnostic } from './rule-mapper.js';
 import { runtimeErrorRange } from './runtime-error.js';
 
-import type { ExtensionContext, TextDocument, WorkspaceFolder } from 'vscode';
+import type { ExtensionContext, TextDocument } from 'vscode';
 
 /**
  * Manages diagnostics produced by `protolint`.
@@ -89,48 +90,30 @@ class Diagnostics {
       }),
     );
 
-    const watcher = workspace.createFileSystemWatcher(`**/${CONFIG_BASENAME}`);
+    const watcher = workspace.createFileSystemWatcher(CONFIG_GLOB);
+
+    const handleConfigChange = function (configUri: Uri, eventType: string) {
+      logger.trace(
+        `[File watcher] Config ${eventType} event:`,
+        configUri.toString(),
+      );
+
+      diagnostics.processConfigChange(configUri);
+    };
 
     disposables.push(watcher);
     watcher.onDidCreate(
-      (configUri) => {
-        logger.trace(
-          `[File watcher] '${CONFIG_BASENAME}' create event:`,
-          configUri.toString(),
-        );
-
-        diagnostics.processConfigChange(
-          workspace.getWorkspaceFolder(configUri),
-        );
-      },
+      (configUri) => handleConfigChange(configUri, 'create'),
       undefined,
       disposables,
     );
     watcher.onDidChange(
-      (configUri) => {
-        logger.trace(
-          `[File watcher] '${CONFIG_BASENAME}' change event:`,
-          configUri.toString(),
-        );
-
-        diagnostics.processConfigChange(
-          workspace.getWorkspaceFolder(configUri),
-        );
-      },
+      (configUri) => handleConfigChange(configUri, 'change'),
       undefined,
       disposables,
     );
     watcher.onDidDelete(
-      (configUri) => {
-        logger.trace(
-          `[File watcher] '${CONFIG_BASENAME}' delete event:`,
-          configUri.toString(),
-        );
-
-        diagnostics.processConfigChange(
-          workspace.getWorkspaceFolder(configUri),
-        );
-      },
+      (configUri) => handleConfigChange(configUri, 'delete'),
       undefined,
       disposables,
     );
@@ -214,14 +197,15 @@ class Diagnostics {
 
     workspace.onDidChangeWorkspaceFolders(
       async ({ added, removed }) => {
-        const affectedFolders = [...added, ...removed];
-        const affectedDocuments = workspace.textDocuments
-          .filter(({ uri }) => this._diagnosticCollection.has(uri))
-          .filter(({ uri: documentUri }) =>
-            affectedFolders.some(({ uri: folderUri }) =>
-              documentUri.toString().startsWith(folderUri.toString()),
-            ),
-          );
+        const affectedFolders = [...added, ...removed].map(
+          (folder) => folder.uri.toString() + '/',
+        );
+
+        const affectedDocuments = workspace.textDocuments.filter(
+          ({ uri }) =>
+            this._diagnosticCollection.has(uri) &&
+            affectedFolders.some((folder) => uri.toString().startsWith(folder)),
+        );
 
         for (const document of affectedDocuments) {
           await diagnostics.refresh(document);
@@ -232,16 +216,14 @@ class Diagnostics {
     );
   }
 
-  processConfigChange(workspaceFolder: undefined | WorkspaceFolder): void {
-    if (workspaceFolder === undefined) {
-      return;
-    }
+  processConfigChange(configUri: Uri): void {
+    const dirname = Uri.joinPath(configUri, '..').toString() + '/';
 
-    const affectedDocuments = workspace.textDocuments
-      .filter(({ uri }) => Diagnostics._diagnosticCollection.has(uri))
-      .filter(
-        ({ uri }) => workspace.getWorkspaceFolder(uri) === workspaceFolder,
-      );
+    const affectedDocuments = workspace.textDocuments.filter(
+      ({ uri }) =>
+        Diagnostics._diagnosticCollection.has(uri) &&
+        uri.toString().startsWith(dirname),
+    );
 
     for (const document of affectedDocuments) {
       void this.refresh(document);
