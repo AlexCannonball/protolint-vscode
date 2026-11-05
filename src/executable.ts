@@ -1,12 +1,9 @@
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { readFile } from 'node:fs/promises';
 import { text } from 'node:stream/consumers';
 
-import { EventEmitter, ExtensionMode, window } from 'vscode';
+import { EventEmitter, ExtensionMode, Uri, window, workspace } from 'vscode';
 
-import { DocumentMirror } from './document-mirror.js';
-import { isNodeError } from './helpers.js';
 import { Measure } from './performance.js';
 
 import type {
@@ -14,13 +11,11 @@ import type {
   SpawnOptionsWithoutStdio,
 } from 'node:child_process';
 
-import type { Disposable, QuickPickItem, Uri } from 'vscode';
+import type { Disposable, QuickPickItem, TextDocument } from 'vscode';
 
 import type { TAutoDisableMode, TResult } from './constants.js';
-import type { IReflectionError } from './document-mirror.js';
 import type { TWriteable } from './helpers.js';
 
-const AUTOFIX_METHOD = 'autofix' as const;
 const PROTOLINT_RUN_TIMEOUT = 5000;
 const UNKNOWN_VERSION = 'unknown';
 
@@ -33,6 +28,7 @@ enum ExecuteErrorCode {
   Terminated = 'PROCESS_TERMINATED',
   Unavailable = 'EXECUTABLE_UNAVAILABLE',
   Unknown = 'EXECUTE_UNKNOWN_ERROR',
+  UnsupportedVersion = 'EXECUTABLE_UNSUPPORTED_VERSION',
 }
 
 /**
@@ -59,74 +55,25 @@ function isProtolintExitCode(value: unknown): value is ProtolintExitCode {
 
 function isSpawnError(value: unknown): value is { code: string } & Error {
   return (
-    value instanceof Error && 'code' in value && typeof value.code === 'string'
+    Error.isError(value) && 'code' in value && typeof value.code === 'string'
   );
 }
 
-/**
- * {@link DocumentMirror} is applied before calling the target, so that the
- * target uses the current document text reflection.
- */
-function mirrored<
-  This extends Executable = Executable,
-  Return extends ReturnType<Executable['lint' | typeof AUTOFIX_METHOD]> =
-    ReturnType<Executable['lint' | typeof AUTOFIX_METHOD]>,
->(
-  target: (this: This, ...arguments_: TExecuteSignature) => Return,
-  _context: ClassMethodDecoratorContext<
-    This,
-    (this: This, ...arguments_: TExecuteSignature) => Return
-  >,
-) {
-  async function replacementMethod(
-    this: This,
-    ...arguments_: TExecuteSignature
-  ): Promise<
-    | Awaited<Return>
-    | TResult<never, IExecuteError>
-    | TResult<never, IReflectionError>
-  > {
-    if (this.status.errorCode !== undefined) {
-      await this.refreshStatus();
-    }
-
-    if (this.status.errorCode !== undefined) {
-      return {
-        error: { code: this.status.errorCode },
-        result: 'error',
-      };
-    }
-
-    const [uri, configPath, , autoDisable] = arguments_;
-    const mirror = await DocumentMirror.getInstance();
-    const reflection = await mirror.reflect(
-      uri,
-      target.name === AUTOFIX_METHOD,
-    );
-
-    if (reflection.result === 'error') {
-      return reflection;
-    }
-
-    await using disposable = reflection.value;
-    const { cwd, fileUri } = disposable;
-
-    return await target.call(this, fileUri, configPath, cwd, autoDisable);
-  }
-
-  return replacementMethod;
-}
-
 const runExecutable: TRunExecutable = async function (
+  documentText,
   ...arguments_
 ): Promise<TResult<IExecuteResult, IExecuteError>> {
   const process = spawn(...arguments_);
+
+  if (documentText !== undefined) {
+    process.stdin.end(documentText);
+  }
 
   const stderr = text(process.stderr);
   const stdout = text(process.stdout);
 
   try {
-    const [exitCode] = (await once(process, 'exit')) as unknown[];
+    const [exitCode] = (await once(process, 'close')) as unknown[];
 
     if (exitCode === null) {
       return {
@@ -189,9 +136,8 @@ const runExecutable: TRunExecutable = async function (
 
 enum AutofixErrorCodes {
   Canceled = 'CANCELED_BY_USER',
+  NoFixedText = 'NO_FIXED_TEXT_PROVIDED',
   OtherErrors = 'OTHER_ERRORS',
-  ReadfileError = 'READFILE_ERROR',
-  Unknown = 'UNKNOWN_EXIT_CODE',
 }
 
 /**
@@ -212,9 +158,10 @@ interface IAutofix {
   /**
    * Runs `protolint lint -fix`.
    */
-  [AUTOFIX_METHOD]: (
-    ...arguments_: TExecuteSignature
-  ) => Promise<TResult<IAutofixResult, IAutofixError | TExecuteMirroredError>>;
+  autofix: (
+    document: TextDocument,
+    autoDisable?: TAutoDisableMode,
+  ) => Promise<TResult<IAutofixResult, IAutofixError | IExecuteError>>;
 }
 
 interface IAutofixError {
@@ -222,7 +169,6 @@ interface IAutofixError {
    * Autofix error code.
    */
   code: AutofixErrorCodes;
-  error?: NodeJS.ErrnoException | null;
   stderr?: string;
 }
 
@@ -234,7 +180,7 @@ interface IAutofixResult {
   /**
    * The document text after the autofix.
    */
-  fixedText?: string;
+  fixedText: string;
 }
 
 interface IExecutableStatus {
@@ -274,8 +220,8 @@ interface ILint {
    * Runs `protolint lint`.
    */
   lint: (
-    ...arguments_: TExecuteSignature
-  ) => Promise<TResult<IExecuteResult, TExecuteMirroredError>>;
+    document: TextDocument,
+  ) => Promise<TResult<IExecuteResult, IExecuteError>>;
 }
 
 type TArguments<T extends TArgumentsOptions = TArgumentsOptions> = T extends [
@@ -286,43 +232,14 @@ type TArguments<T extends TArgumentsOptions = TArgumentsOptions> = T extends [
   : never;
 
 type TArgumentsOptions<T extends TRunExecutable = TRunExecutable> =
-  Parameters<T> extends [infer _Command, ...infer Rest]
+  Parameters<T> extends [infer _DocumentText, infer _Command, ...infer Rest]
     ? [...rest: Rest]
     : never;
-
-type TCwd = Pick<SpawnOptionsWithoutStdio, 'cwd'>;
-
-type TExecuteMirroredError = IExecuteError | IReflectionError;
-
-/**
- * Ordered parameters for calling `protolint`.
- */
-type TExecuteSignature = [
-  /**
-   * The target document URI
-   */
-  uri: Uri,
-
-  /**
-   * `protolint` config file path
-   */
-  configPath: string | undefined,
-
-  /**
-   * CWD for running `protolint` process.
-   * @defaultValue as in {@link spawn}.
-   */
-  cwd?: string,
-
-  /**
-   * `-auto_disable` mode for `protolint -fix`
-   */
-  mode?: TAutoDisableMode,
-];
 
 type TRunExecutable<T extends typeof spawn = typeof spawn> =
   Parameters<T> extends [infer Command, infer Arguments, ...infer _Rest]
     ? (
+        documentText: string | undefined,
         command: Command,
         arguments_: Arguments,
         options: SpawnOptionsWithoutStdio,
@@ -431,13 +348,10 @@ class Executable implements Disposable, IAutofix, ILint {
     this._extensionMode = extensionMode;
   }
 
-  @mirrored
   async autofix(
-    uri: Uri,
-    configPath?: string,
-    cwd?: string,
+    document: TextDocument,
     autoDisable?: TAutoDisableMode,
-  ): Promise<TResult<IAutofixResult, IAutofixError | TExecuteMirroredError>> {
+  ): Promise<TResult<IAutofixResult, IAutofixError | IExecuteError>> {
     if (autoDisable === undefined) {
       const item = await window.showQuickPick<IAutofixOptions>(
         [
@@ -471,68 +385,39 @@ class Executable implements Disposable, IAutofix, ILint {
       ({ autoDisable } = item);
     }
 
-    using measure = new Measure('info', `Autofix ${uri.toString()}`);
+    using _measure = new Measure('info', `Autofix ${document.uri.toString()}`);
     const arguments_ = ['lint', '-fix'];
 
     if (autoDisable && autoDisable !== 'none') {
-      arguments_.push(`-auto_disable=${autoDisable}`);
+      arguments_.push('-auto_disable', autoDisable);
     }
 
-    const result = await this._withConfig(uri, configPath, arguments_, {
-      cwd,
-    });
+    const result = await this._withStatus(arguments_, document);
 
     if (result.result === 'error') {
       return result;
     }
 
     switch (result.value.exitCode) {
-      case ProtolintExitCode.Clear:
-        return { result: 'success', value: {} };
+      case ProtolintExitCode.Clear: {
+        const fixedText = result.value.stdout;
 
-      case ProtolintExitCode.LintFlags: {
-        let fixedText;
-
-        try {
-          const prefixedText = await readFile(uri.fsPath, {
-            encoding: 'utf8',
-          });
-          const lines = prefixedText.split('\n');
-
-          lines.shift();
-
-          fixedText = lines.join('\n');
-
-          measure.end();
-        } catch (error) {
+        if (fixedText === undefined) {
           return {
-            error: {
-              code: AutofixErrorCodes.ReadfileError,
-              ...(isNodeError(error) && { error }),
-            },
+            error: { code: AutofixErrorCodes.NoFixedText },
             result: 'error',
           };
         }
 
-        return {
-          result: 'success',
-          value: { fixedText },
-        };
+        return { result: 'success', value: { fixedText } };
       }
 
+      case ProtolintExitCode.LintFlags:
       case ProtolintExitCode.OtherErrors:
         return {
           error: {
             code: AutofixErrorCodes.OtherErrors,
             stderr: result.value.stderr,
-          },
-          result: 'error',
-        };
-
-      default:
-        return {
-          error: {
-            code: AutofixErrorCodes.Unknown,
           },
           result: 'error',
         };
@@ -544,15 +429,12 @@ class Executable implements Disposable, IAutofix, ILint {
     this.#commandSetEvents?.dispose();
   }
 
-  @mirrored
   async lint(
-    uri: Uri,
-    configPath?: string,
-    cwd?: string,
-  ): Promise<TResult<IExecuteResult, IExecuteError | TExecuteMirroredError>> {
+    document: TextDocument,
+  ): Promise<TResult<IExecuteResult, IExecuteError>> {
     const arguments_ = ['lint', '-reporter', ReportFormat.Json];
 
-    return this._withConfig(uri, configPath, arguments_, { cwd });
+    return this._withStatus(arguments_, document);
   }
 
   async setCommand(value: string): Promise<IExecutableStatus> {
@@ -575,8 +457,19 @@ class Executable implements Disposable, IAutofix, ILint {
     let version;
 
     if (run.result === 'success' && run.value.stdout !== undefined) {
-      [, version] =
-        /^protolint version (\d+\.\d+\.\d+)/.exec(run.value.stdout) ?? [];
+      const [, major, minor, patch] =
+        /^protolint version (\d+)\.(\d+)\.(\d+)/.exec(run.value.stdout) ?? [];
+
+      if (major !== undefined && minor !== undefined && patch !== undefined) {
+        version = `${major}.${minor}.${patch}`;
+
+        const majorNumber = Number(major);
+        const minorNumber = Number(minor);
+
+        if (majorNumber === 0 && minorNumber < 58) {
+          errorCode = ExecuteErrorCode.UnsupportedVersion;
+        }
+      }
     }
 
     this._setStatus(errorCode, version);
@@ -593,27 +486,8 @@ class Executable implements Disposable, IAutofix, ILint {
     }
   }
 
-  private async _withConfig(
-    { fsPath, scheme }: Uri,
-    configPath: string | undefined,
-    ...arguments_: Parameters<typeof this._withStatus>
-  ): ReturnType<typeof this._withStatus> {
-    if (scheme !== 'file') {
-      return { error: { code: ExecuteErrorCode.Scheme }, result: 'error' };
-    }
-
-    const [spawnArguments] = arguments_;
-
-    if (configPath !== undefined && configPath) {
-      spawnArguments.push(`-config_path=${configPath}`);
-    }
-
-    spawnArguments.push(fsPath);
-
-    return this._withStatus(...arguments_);
-  }
-
   private async _withExecutable(
+    documentText?: string,
     ...arguments_: TArgumentsOptions
   ): Promise<Awaited<ReturnType<typeof runExecutable>>> {
     if (this.#command === '') {
@@ -623,15 +497,32 @@ class Executable implements Disposable, IAutofix, ILint {
       };
     }
 
-    return runExecutable(this.#command, ...arguments_);
+    return runExecutable(documentText, this.#command, ...arguments_);
   }
 
   private async _withOptions(
     arguments_: TArguments,
-    cwd?: TCwd,
+    document?: TextDocument,
   ): Promise<Awaited<ReturnType<typeof this._withExecutable>>> {
-    return this._withExecutable(arguments_, {
-      ...cwd,
+    let cwd;
+
+    if (document) {
+      const workspaceFolder = workspace.getWorkspaceFolder(document.uri);
+
+      cwd = workspaceFolder?.uri.fsPath;
+
+      if (cwd === undefined && document.uri.scheme === 'file') {
+        cwd = Uri.joinPath(document.uri, '..').fsPath;
+      }
+
+      const filename =
+        document.uri.scheme === 'file' ? document.uri.fsPath : 'untitled.proto';
+
+      arguments_ = [...arguments_, '-stdin_filename', filename, '-'];
+    }
+
+    return this._withExecutable(document?.getText(), arguments_, {
+      cwd,
       timeout: PROTOLINT_RUN_TIMEOUT,
     });
   }
@@ -639,6 +530,17 @@ class Executable implements Disposable, IAutofix, ILint {
   private async _withStatus(
     ...arguments_: Parameters<typeof this._withOptions>
   ): Promise<Awaited<ReturnType<typeof this._withOptions>>> {
+    if (this.status.errorCode !== undefined) {
+      await this.refreshStatus();
+    }
+
+    if (this.status.errorCode !== undefined) {
+      return {
+        error: { code: this.status.errorCode },
+        result: 'error',
+      };
+    }
+
     const result = await this._withOptions(...arguments_);
 
     if (result.result === 'error') {

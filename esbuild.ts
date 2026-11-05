@@ -56,7 +56,6 @@ const sharedOptions: esbuild.BuildOptions = {
     esbuildProblemMatcherPlugin,
   ],
   sourcesContent: false,
-  target: ['node24'],
 };
 
 const developmentOptions: esbuild.BuildOptions = {

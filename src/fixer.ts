@@ -3,7 +3,6 @@ import {
   commands,
   languages,
   Range,
-  window,
   workspace,
   WorkspaceEdit,
 } from 'vscode';
@@ -15,7 +14,7 @@ import {
   EDITOR_COMMAND_FIX_INDENTS,
   PROTOBUF_SELECTOR,
 } from './constants.js';
-import { fixIndents, getConfigPath } from './helpers.js';
+import { fixIndents } from './helpers.js';
 import { logger } from './logger.js';
 import { codeActions, ProtolintDiagnostic } from './rule-mapper.js';
 
@@ -43,9 +42,11 @@ class ProtolintActionProvider implements CodeActionProvider {
     }
 
     const actions: CodeAction[] = [];
-    const actionableDiagnostics = diagnostics
-      .filter((diagnostic) => diagnostic instanceof ProtolintDiagnostic)
-      .filter((diagnostic) => diagnostic.range.contains(range));
+    const actionableDiagnostics = diagnostics.filter(
+      (diagnostic): diagnostic is ProtolintDiagnostic =>
+        diagnostic instanceof ProtolintDiagnostic &&
+        diagnostic.range.contains(range),
+    );
 
     for (const diagnostic of actionableDiagnostics) {
       actions.push(...codeActions(document, diagnostic));
@@ -127,10 +128,10 @@ class Fixer {
     try {
       autofix = await this.#executableCache
         .getExecutable(uri)
-        .autofix(uri, await getConfigPath(uri), undefined, autoDisable);
+        .autofix(document, autoDisable);
     } catch (error) {
       logger.error(
-        `[Fixer] Failed autofixing ${uri.toString()} via temp file. Details:`,
+        `[Fixer] Failed autofixing ${uri.toString()}. Details:`,
         error,
       );
 
@@ -147,8 +148,10 @@ class Fixer {
       value: { fixedText },
     } = autofix;
 
-    if (fixedText === undefined) {
-      void window.showInformationMessage('Protolint: no errors to autofix');
+    if (fixedText === document.getText()) {
+      logger.info(
+        `[Fixer] No text changes after ${uri.toString()} autofix attempt`,
+      );
 
       return;
     }

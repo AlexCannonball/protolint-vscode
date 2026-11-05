@@ -1,6 +1,6 @@
-import { commands, Uri, window, workspace } from 'vscode';
+import { commands, window } from 'vscode';
 
-import { CONFIG_BASENAME, WARNING_STATE_KEY } from './constants.js';
+import { WARNING_STATE_KEY } from './constants.js';
 import { logger } from './logger.js';
 
 import type { ExtensionContext, TextEditor, Event as TypedEvent } from 'vscode';
@@ -119,78 +119,22 @@ const executeCommand: TExecuteCommand = function (...arguments_) {
   return commands.executeCommand(...arguments_);
 };
 
-/**
- * If a `protolint` config file exists in the Workspace Folder root, returns
- * this file absolute path.
- *
- * @param uri The document URI for which the config search is being performed
- */
-async function getConfigPath(uri: Uri): Promise<string | undefined> {
-  const workspaceFolder = workspace.getWorkspaceFolder(uri);
+async function clearDeprecationWarningState({
+  globalState,
+}: ExtensionContext): Promise<void> {
+  const lastShownVersion = globalState.get<string>(WARNING_STATE_KEY);
 
-  if (workspaceFolder === undefined) {
-    return;
+  if (lastShownVersion !== undefined) {
+    // eslint-disable-next-line unicorn/no-useless-undefined
+    await globalState.update(WARNING_STATE_KEY, undefined);
   }
-
-  const configUri = Uri.joinPath(workspaceFolder.uri, CONFIG_BASENAME);
-
-  try {
-    await workspace.fs.stat(configUri);
-  } catch {
-    return;
-  }
-
-  return configUri.fsPath;
-}
-
-function isNodeError(value: unknown): value is NodeJS.ErrnoException {
-  return value instanceof Error;
-}
-
-async function showDeprecationWarningIfNeeded(
-  context: ExtensionContext,
-): Promise<void> {
-  const currentVersion = (context.extension.packageJSON as { version: string })
-    .version;
-
-  const lastShownVersion = context.globalState.get<string>(WARNING_STATE_KEY);
-
-  if (lastShownVersion === currentVersion) {
-    return;
-  }
-
-  const readButton = 'Read Migration Guide';
-  const message =
-    'Upcoming Breaking Change: protolint extension will soon drop support for protolint binary versions prior to v0.58.0.';
-
-  const selection = await window.showWarningMessage(message, readButton);
-
-  if (selection === readButton) {
-    const guideUri = Uri.joinPath(
-      context.extensionUri,
-      'docs',
-      'stdin-migration.md',
-    );
-
-    try {
-      await commands.executeCommand('markdown.showPreview', guideUri);
-    } catch {
-      const guide = await workspace.openTextDocument(guideUri);
-
-      await window.showTextDocument(guide);
-    }
-  }
-
-  await context.globalState.update(WARNING_STATE_KEY, currentVersion);
 }
 
 export type { TExtractListener, TWriteable };
 export {
+  clearDeprecationWarningState,
   executeCommand,
   fixIndents,
-  getConfigPath,
-  isNodeError,
   locateExecutable,
   registerCommand,
-  showDeprecationWarningIfNeeded,
 };

@@ -91,7 +91,7 @@ function parseJsonStderr(
     return {
       error: {
         code: ParseJsonErrorCode.Failed,
-        ...(error instanceof Error && { error }),
+        error: Error.isError(error) ? error : undefined,
       },
       result: 'error',
     };
