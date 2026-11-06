@@ -61,4 +61,4 @@ plugins:
     - assets:
         - label: "Extension VSIX"
           path: "*.vsix"
-      draftRelease: true
+      successCommentCondition: "<% return issue.user.type !== 'Bot'; %>"
